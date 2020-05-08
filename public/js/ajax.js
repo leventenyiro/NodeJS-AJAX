@@ -11,7 +11,19 @@ function getAll() {
             <tr>
                 <td>${i.nev}</td>
                 <td>${i.ar}</td>
-                <td>${i.keszleten}</td>
+                <td>
+                    <select class="form-control" id="input_table_upd_keszleten" onchange="updateKeszleten(${i.id})">`
+                    if (i.keszleten == 1) {
+                        x += `
+                        <option value="1" selected>Igen</option>
+                        <option value="0">Nem</option>`
+                    } else {
+                        x += `
+                        <option value="1">Igen</option>
+                        <option value="0" selected>Nem</option>`
+                    }
+                    x += `</select>
+                </td>
                 <td>
                     <button class="btn btn-danger" onclick="torles(${i.id})">Törlés</button>
                 </td>
@@ -123,4 +135,19 @@ function update(id) {
 
         getAll()
     }
+}
+
+function updateKeszleten(id) {
+    var xhttp = new XMLHttpRequest()
+
+    xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
+    xhttp.send()
+    var data = JSON.parse(xhttp.response)
+
+    var keszleten = document.getElementById("input_table_upd_keszleten").value
+    xhttp.open("PUT", `http://localhost:8080/products/${id}`, true)
+    xhttp.setRequestHeader("Content-type", "application/json")
+    xhttp.send(JSON.stringify({nev: data[0].nev, ar: data[0].ar, keszleten: keszleten}))
+
+    getAll()
 }
