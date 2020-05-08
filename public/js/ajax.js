@@ -60,7 +60,6 @@ function updateForm(id) {
     xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
-    console.log(data[0])
     document.getElementById("updateForm").innerHTML = ""
     x = `
     <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -75,14 +74,14 @@ function updateForm(id) {
                 <div class="modal-body">
                     <div style="padding: 2%; margin:auto">
                         <div class="form-group">
-                            <input class="form-control" type="text" id="input_nev" placeholder="Név" value="${data[0].nev}">
+                            <input class="form-control" type="text" id="input_upd_nev" placeholder="Név" value="${data[0].nev}">
                         </div>
                         <div class="form-group">
-                            <input class="form-control" type="number" id="input_ar" placeholder="Ár" value="${data[0].ar}">
+                            <input class="form-control" type="number" id="input_upd_ar" placeholder="Ár" value="${data[0].ar}">
                         </div>
                         <div class="form-group">
                             <p>Készleten</p>
-                            <select class="form-control" id="input_keszleten">`
+                            <select class="form-control" id="input_upd_keszleten">`
                             if (data[0].keszleten == 1) {
                                 x += `
                                 <option value="1" selected>Igen</option>
@@ -98,7 +97,7 @@ function updateForm(id) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-dismiss="modal" onclick="insert()">Módosítás</button>
+                    <button class="btn btn-primary" data-dismiss="modal" onclick="update(${id})">Módosítás</button>
                 </div>
             </div>
         </div>
@@ -107,4 +106,21 @@ function updateForm(id) {
     $(document).ready(function() {
         $("#updateModal").modal("show")
     })
+}
+
+function update(id) {
+    var xhttp = new XMLHttpRequest()
+
+    var nev = document.getElementById("input_upd_nev").value
+    var ar = document.getElementById("input_upd_ar").value
+    var keszleten = document.getElementById("input_upd_keszleten").value
+
+    if (document.getElementById("input_upd_nev").value != "" && document.getElementById("input_upd_ar").value != "") {
+        var data = {nev: nev, ar: ar, keszleten: keszleten}
+        xhttp.open("PUT", `http://localhost:8080/products/${id}`, true)
+        xhttp.setRequestHeader("Content-type", "application/json")
+        xhttp.send(JSON.stringify(data))
+        
+        getAll()
+    }
 }
