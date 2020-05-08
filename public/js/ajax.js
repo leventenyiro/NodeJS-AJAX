@@ -12,10 +12,13 @@ function getAll() {
                 <td>${i.nev}</td>
                 <td>${i.ar}</td>
                 <td>${i.keszleten}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="torles(${i.id})">Törlés</button>
+                </td>
             </tr>`
         });
     } else {
-        x = `<tr><td colspan="3"><h3>Nincs adat</h3></td></tr>`
+        x = `<tr><td colspan="4"><h3>Nincs adat</h3></td></tr>`
     }
     document.getElementById("tbody").innerHTML += x;
 }
@@ -27,10 +30,24 @@ function insert() {
     var ar = document.getElementById("input_ar").value
     var keszleten = document.getElementById("input_keszleten").value
 
-    var data = {nev: nev, ar: ar, keszleten: keszleten}
-    xhttp.open("POST", "http://localhost:8080/products", true)
-    xhttp.setRequestHeader("Content-type", "application/json")
-    xhttp.send(JSON.stringify(data))
+    if (document.getElementById("input_nev").value != "" && document.getElementById("input_ar").value != "") {
+        var data = {nev: nev, ar: ar, keszleten: keszleten}
+        xhttp.open("POST", "http://localhost:8080/products", true)
+        xhttp.setRequestHeader("Content-type", "application/json")
+        xhttp.send(JSON.stringify(data))
 
+        document.getElementById("input_nev").value = ""
+        document.getElementById("input_ar").value = ""
+        document.getElementById("input_keszleten").value = 1
+    
+        getAll()
+    }
+}
+
+function torles(id) {
+    var xhttp = new XMLHttpRequest()
+    xhttp.open("DELETE", `http://localhost:8080/products/${id}`, true)
+    xhttp.send()
+    
     getAll()
 }

@@ -8,14 +8,12 @@ exports.getAll = (req, res) => {
 }
 
 exports.post = (req, res) => {
-    console.log(req.body)
     var db = new Database()
     db.post(req, (err) => {
         if (err) res.send("Valami nincs kitöltve")
-        res.send("Sikeres adatrögzítés")
-        /*db.getAll((result) => {
+        db.getAll((result) => {
             res.send(result)
-        })*/
+        })
     })
 }
 
@@ -30,7 +28,6 @@ exports.put = (req, res) => {
     var db = new Database()
     db.put(req, (err) => {
         if (err) res.send("Valami nincs kitöltve")
-        //res.send("Sikeres módosítás")
         db.getAll((result) => {
             res.send(result)
         })
@@ -40,7 +37,6 @@ exports.put = (req, res) => {
 exports.delete = (req, res) => {
     var db = new Database()
     db.delete(req, () => {
-        //res.send("Sikeres törlés")
         db.getAll((result) => {
             res.send(result)
         })
