@@ -3,14 +3,13 @@ var Database = require("../models/Database")
 exports.getAll = (req, res) => {
     var db = new Database()
     db.getAll((result) => {
-        res.json(result)
+        res.send(result)
     })
 }
 
 exports.post = (req, res) => {
     var db = new Database()
-    db.post(req, (err) => {
-        if (err) res.send("Valami nincs kitöltve")
+    db.post(req, () => {
         db.getAll((result) => {
             res.send(result)
         })
@@ -26,8 +25,7 @@ exports.getOne = (req, res) => {
 
 exports.put = (req, res) => {
     var db = new Database()
-    db.put(req, (err) => {
-        if (err) res.send("Valami nincs kitöltve")
+    db.put(req, () => {
         db.getAll((result) => {
             res.send(result)
         })

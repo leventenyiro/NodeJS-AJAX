@@ -1,6 +1,6 @@
 function getAll() {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", "http://localhost:8080/products", true)
+    xhttp.open("GET", "http://localhost:8080/products", false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("tbody").innerHTML = "";
@@ -21,7 +21,7 @@ function getAll() {
             </tr>`
         });
     } else {
-        x = `<tr><td colspan="4"><h3>Nincs adat</h3></td></tr>`
+        x = `<tr><td colspan="5"><h3>Nincs adat</h3></td></tr>`
     }
     document.getElementById("tbody").innerHTML += x;
 }
@@ -57,7 +57,7 @@ function torles(id) {
 
 function updateForm(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", `http://localhost:8080/products/${id}`, true)
+    xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("updateForm").innerHTML = ""
