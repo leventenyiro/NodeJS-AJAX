@@ -7,14 +7,15 @@ exports.getAll = (req, res) => {
     })
 }
 
-exports.post = (req,res) => {
+exports.post = (req, res) => {
+    console.log(req.body)
     var db = new Database()
     db.post(req, (err) => {
         if (err) res.send("Valami nincs kitöltve")
-        //res.send("Sikeres adatrögzítés")
-        db.getAll((result) => {
+        res.send("Sikeres adatrögzítés")
+        /*db.getAll((result) => {
             res.send(result)
-        })
+        })*/
     })
 }
 

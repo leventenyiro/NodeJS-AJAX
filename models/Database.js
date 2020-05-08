@@ -20,6 +20,7 @@ class Database {
     post(req, callback) {
         this.conn.connect(() => {
             var sql = `INSERT INTO raktar (nev, ar, keszleten) VALUES ("${req.body.nev}", ${req.body.ar}, ${req.body.keszleten})`
+            console.log(sql)
             this.conn.query(sql, (err) => {
                 return callback(err)
             })

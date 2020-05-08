@@ -6,6 +6,7 @@ var path = require("path")
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use("/public", express.static(path.join(__dirname, "/public")))
+app.use(bodyParser.json())
 
 app.use("/", router)
 
