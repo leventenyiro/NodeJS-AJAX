@@ -1,6 +1,6 @@
 function getAll() {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", "http://localhost:8080/products", false)
+    xhttp.open("GET", "http://localhost:8080/products", true)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("tbody").innerHTML = "";
@@ -57,7 +57,7 @@ function torles(id) {
 
 function updateForm(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
+    xhttp.open("GET", `http://localhost:8080/products/${id}`, true)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("updateForm").innerHTML = ""
@@ -120,7 +120,7 @@ function update(id) {
         xhttp.open("PUT", `http://localhost:8080/products/${id}`, true)
         xhttp.setRequestHeader("Content-type", "application/json")
         xhttp.send(JSON.stringify(data))
-        
+
         getAll()
     }
 }
