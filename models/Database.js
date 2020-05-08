@@ -11,7 +11,7 @@ class Database {
 
     getAll(callback) {
         this.conn.connect(() => {
-            this.conn.query("SELECT * FROM raktar", (err, result) => {
+            this.conn.query("SELECT * FROM raktar ORDER BY id", (err, result) => {
                 return callback(result)
             })
         })
