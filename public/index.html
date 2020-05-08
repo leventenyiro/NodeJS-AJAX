@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body onload="getAll()">
+    <form action="http://localhost:8080/products" method="POST">
+        <input type="text" name="input_nev" placeholder="Név">
+        <input type="number" name="input_ar" placeholder="Ár">
+        <input type="number" name="input_keszleten" placeholder="Készleten">
+        <button type="submit">Küldés</button>
+    </form>
+    <table>
+        <tr>
+            <th>Név</th>
+            <th>Ár</th>
+            <th>Készleten</th>
+        </tr>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+</body>
+</html>
