@@ -1,5 +1,5 @@
 # NodeJS-AJAX
-This is a restapi. This uses NodeJS with MVC technology.
-Resources:
-https://stackabuse.com/building-a-rest-api-with-node-and-express/
-https://www.youtube.com/watch?v=dDjzTDN3cy8
+<p>This is a restapi. This uses NodeJS with MVC technology.</p>
+<p>Resources:<p>
+ - https://stackabuse.com/building-a-rest-api-with-node-and-express/
+ - https://www.youtube.com/watch?v=dDjzTDN3cy8
