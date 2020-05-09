@@ -1,8 +1,11 @@
+this.ip = "192.168.0.10"
+
 function getAll() {
     var xhttp = new XMLHttpRequest()
 
     var search = document.getElementById("input_search").value
-    var url = "http://localhost:8080/products"
+    var url = `http://${this.ip}:8080/products`
+    console.log(url)
     if (search != "") {
         url += `?search=${search}`
     }
@@ -51,7 +54,7 @@ function insert() {
 
     if (document.getElementById("input_nev").value != "" && document.getElementById("input_ar").value != "") {
         var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("POST", "http://localhost:8080/products", true)
+        xhttp.open("POST", `http://${this.ip}:8080/products`, true)
         xhttp.setRequestHeader("Content-type", "application/json")
         xhttp.send(JSON.stringify(data))
 
@@ -65,7 +68,7 @@ function insert() {
 
 function torles(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("DELETE", `http://localhost:8080/products/${id}`, true)
+    xhttp.open("DELETE", `http://${this.ip}:8080/products/${id}`, true)
     xhttp.send()
     
     getAll()
@@ -73,7 +76,7 @@ function torles(id) {
 
 function updateForm(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
+    xhttp.open("GET", `http://${this.ip}:8080/products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("updateForm").innerHTML = ""
@@ -133,7 +136,7 @@ function update(id) {
 
     if (document.getElementById("input_upd_nev").value != "" && document.getElementById("input_upd_ar").value != "") {
         var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("PUT", `http://localhost:8080/products/${id}`, true)
+        xhttp.open("PUT", `http://${this.ip}:8080/products/${id}`, true)
         xhttp.setRequestHeader("Content-type", "application/json")
         xhttp.send(JSON.stringify(data))
 
@@ -144,12 +147,12 @@ function update(id) {
 function updateKeszleten(id) {
     var xhttp = new XMLHttpRequest()
 
-    xhttp.open("GET", `http://localhost:8080/products/${id}`, false)
+    xhttp.open("GET", `http://${this.ip}:8080/products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
 
     var keszleten = document.getElementById("input_table_upd_keszleten").value
-    xhttp.open("PUT", `http://localhost:8080/products/${id}`, true)
+    xhttp.open("PUT", `http://${this.ip}:8080/products/${id}`, true)
     xhttp.setRequestHeader("Content-type", "application/json")
     xhttp.send(JSON.stringify({nev: data[0].nev, ar: data[0].ar, keszleten: keszleten}))
 
