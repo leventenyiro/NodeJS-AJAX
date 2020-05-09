@@ -9,9 +9,14 @@ class Database {
         })
     }
 
-    getAll(callback) {
+    getAll(req, callback) {
         this.conn.connect(() => {
-            this.conn.query("SELECT * FROM raktar ORDER BY id", (err, result) => {
+            var sql = "SELECT * FROM raktar"
+            if (req.query.search != undefined) {
+                sql += ` WHERE nev LIKE "${req.query.search}%"`
+            }
+            sql += " ORDER BY id"
+            this.conn.query(sql, (err, result) => {
                 return callback(result)
             })
         })

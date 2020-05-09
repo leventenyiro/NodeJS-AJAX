@@ -2,7 +2,7 @@ var Database = require("../models/Database")
 
 exports.getAll = (req, res) => {
     var db = new Database()
-    db.getAll((result) => {
+    db.getAll(req, (result) => {
         res.send(result)
     })
 }
@@ -10,7 +10,7 @@ exports.getAll = (req, res) => {
 exports.post = (req, res) => {
     var db = new Database()
     db.post(req, () => {
-        db.getAll((result) => {
+        db.getAll(req, (result) => {
             res.send(result)
         })
     })
@@ -26,7 +26,7 @@ exports.getOne = (req, res) => {
 exports.put = (req, res) => {
     var db = new Database()
     db.put(req, () => {
-        db.getAll((result) => {
+        db.getAll(req, (result) => {
             res.send(result)
         })
     })
@@ -35,7 +35,7 @@ exports.put = (req, res) => {
 exports.delete = (req, res) => {
     var db = new Database()
     db.delete(req, () => {
-        db.getAll((result) => {
+        db.getAll(req, (result) => {
             res.send(result)
         })
     })

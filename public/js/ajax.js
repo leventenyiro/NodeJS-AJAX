@@ -1,6 +1,12 @@
 function getAll() {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", "http://localhost:8080/products", false)
+
+    var search = document.getElementById("input_search").value
+    var url = "http://localhost:8080/products"
+    if (search != "") {
+        url += `?search=${search}`
+    }
+    xhttp.open("GET", url, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("tbody").innerHTML = "";
@@ -26,8 +32,6 @@ function getAll() {
                 </td>
                 <td>
                     <button class="btn btn-danger" onclick="torles(${i.id})">Törlés</button>
-                </td>
-                <td>
                     <button class="btn btn-primary" onclick="updateForm(${i.id})">Módosítás</button>
                 </td>
             </tr>`
