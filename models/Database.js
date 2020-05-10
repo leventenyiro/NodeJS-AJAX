@@ -1,7 +1,8 @@
 class Database {
     constructor() {
         this.mysql = require("mysql")
-        this.conn = this.mysql.createConnection({
+        this.conn = this.mysql.createPool({
+            connectionLimit: 100000,
             host: "localhost",
             user: "root",
             password: "",
@@ -10,60 +11,67 @@ class Database {
     }
 
     getAll(req, callback) {
-        this.conn.connect((err) => {
+        this.conn.getConnection((err, connection) => {
             if (err) throw err
+
             var sql = "SELECT * FROM raktar"
             if (req.query.search != undefined) {
                 sql += ` WHERE nev LIKE "${req.query.search}%"`
             }
             sql += " ORDER BY id"
-            this.conn.query(sql, (err, result) => {
-                if (err) throw err
+
+            connection.query(sql, (err, result) => {
+                if (err) throw err;
+                connection.release()
                 return callback(result)
             })
         })
     }
 
     post(req, callback) {
-        this.conn.connect((err) => {
+        this.conn.getConnection((err, connection) => {
             if (err) throw err
             var sql = `INSERT INTO raktar (nev, ar, keszleten) VALUES ("${req.body.nev}", ${req.body.ar}, ${req.body.keszleten})`
-            this.conn.query(sql, (err) => {
+            connection.query(sql, (err, result) => {
                 if (err) throw err
-                return callback(err)
+                connection.release()
+                return callback(result)
             })
         })
     }
 
     getOne(req, callback) {
-        this.conn.connect((err) => {
+        this.conn.getConnection((err, connection) => {
             if (err) throw err
             var sql = `SELECT * FROM raktar WHERE id = ${req.params.id}`
-            this.conn.query(sql, (err, result) => {
+            connection.query(sql, (err, result) => {
                 if (err) throw err
+                connection.release()
                 return callback(result)
             })
         })
     }
 
     put(req, callback) {
-        this.conn.connect((err) => {
+        this.conn.getConnection((err, connection) => {
             if (err) throw err
             var sql = `UPDATE raktar SET nev = "${req.body.nev}", ar = ${req.body.ar}, keszleten = ${req.body.keszleten} WHERE id = ${req.params.id}`
-            this.conn.query(sql, (err) => {
+            connection.query(sql, (err, result) => {
                 if (err) throw err
-                return callback(err)
+                connection.release()
+                return callback(result)
             })
         })
     }
 
     delete(req, callback) {
-        this.conn.connect((err) => {
+        this.conn.getConnection((err, connection) => {
             if (err) throw err
             var sql = `DELETE FROM raktar WHERE id = ${req.params.id}`
-            this.conn.query(sql, (err) => {
+            connection.query(sql, (err, result) => {
                 if (err) throw err
-                return callback()
+                connection.release()
+                return callback(result)
             })
         })
     }
