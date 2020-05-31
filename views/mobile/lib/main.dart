@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import "package:http/http.dart" as http;
+import 'package:mobile/http_service.dart';
+import 'package:mobile/product.dart';
 
 void main() => runApp(JsonApp());
 
@@ -9,43 +10,30 @@ class JsonApp extends StatefulWidget {
 }
 
 class _JsonAppState extends State<JsonApp> {
-  Future json = fetchAlbum();
+  final HttpService httpService = HttpService();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Center(
-          child: Text("Valami")
-        )
+        body: FutureBuilder(future: httpService.getProducts(),
+        builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+          if (snapshot.hasData) {
+            List<Product> products = snapshot.data;
+
+            return ListView(
+              children: products.map(
+                (Product product) => ListTile(
+                  title: Text(product.nev),
+                  subtitle: Text(product.ar.toString()),
+                )
+              ).toList()
+            );
+          }
+          return Center(child: CircularProgressIndicator());
+        })
       )
-    );
-  }
-}
-
-Future<Product> fetchProduct() async {
-  final response = await http.get("http://www.trophien.com:8080/products");
-
-  if (response.statusCode == 200) {
-    return Product.fromJson(json.decode(response.body));
-  }
-}
-
-class Product {
-  final int id;
-  final String nev;
-  final int ar;
-  final int keszleten;
-
-  Product({this.id, this.nev, this.ar, this.keszleten})
-
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'],
-      nev: json['nev'],
-      ar: json['ar'],
-      keszleten: json['keszleten']
     );
   }
 }
