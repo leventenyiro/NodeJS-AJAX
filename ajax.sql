@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.6.6deb5
 -- https://www.phpmyadmin.net/
 --
--- Gép: 127.0.0.1:3306
--- Létrehozás ideje: 2020. Ápr 26. 12:30
--- Kiszolgáló verziója: 5.7.23
--- PHP verzió: 7.2.10
+-- Gép: localhost:3306
+-- Létrehozás ideje: 2020. Máj 31. 20:51
+-- Kiszolgáló verziója: 10.0.28-MariaDB-2+b1
+-- PHP verzió: 7.3.11-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -30,27 +28,50 @@ USE `ajax`;
 -- Tábla szerkezet ehhez a táblához `raktar`
 --
 
-DROP TABLE IF EXISTS `raktar`;
-CREATE TABLE IF NOT EXISTS `raktar` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `raktar` (
+  `id` int(11) NOT NULL,
   `nev` varchar(150) COLLATE utf8_hungarian_ci NOT NULL,
   `ar` int(11) NOT NULL,
-  `keszleten` tinyint(4) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=50 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+  `keszleten` tinyint(4) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `raktar`
 --
 
 INSERT INTO `raktar` (`id`, `nev`, `ar`, `keszleten`) VALUES
-(42, '1', 12312, 0),
-(43, '2312', 12312, 1),
-(44, 'dsfadf', 164001, 1),
-(48, '12312', 12312, 1),
-(49, 'asdd', 12312, 1);
-COMMIT;
+(101, 'Étkezőasztal', 30000, 1),
+(100, 'Kanapé', 100000, 1),
+(102, 'Ágy', 80000, 1),
+(103, 'Polc', 10000, 1),
+(104, 'Szekrény', 21000, 0),
+(105, 'Dolgozóasztal', 20000, 1),
+(106, 'Számítógép', 250000, 1),
+(107, 'Laptop', 300000, 1),
+(108, 'Szék', 7000, 0),
+(109, 'Fiókos szekrény', 15000, 1),
+(110, 'Fali állvány', 6500, 1);
 
+--
+-- Indexek a kiírt táblákhoz
+--
+
+--
+-- A tábla indexei `raktar`
+--
+ALTER TABLE `raktar`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `nev_idx` (`nev`);
+
+--
+-- A kiírt táblák AUTO_INCREMENT értéke
+--
+
+--
+-- AUTO_INCREMENT a táblához `raktar`
+--
+ALTER TABLE `raktar`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
