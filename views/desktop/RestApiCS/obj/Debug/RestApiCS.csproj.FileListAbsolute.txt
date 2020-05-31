@@ -1,0 +1,10 @@
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\bin\Debug\RestApiCS.exe.config
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\bin\Debug\RestApiCS.exe
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\bin\Debug\RestApiCS.pdb
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\obj\Debug\RestApiCS.csprojAssemblyReference.cache
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\obj\Debug\RestApiCS.csproj.CoreCompileInputs.cache
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\obj\Debug\RestApiCS.exe
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\obj\Debug\RestApiCS.pdb
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\bin\Debug\Newtonsoft.Json.dll
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\bin\Debug\Newtonsoft.Json.xml
+C:\Users\nyiro\Desktop\RestApiCS\RestApiCS\obj\Debug\RestApiCS.csproj.CopyComplete
