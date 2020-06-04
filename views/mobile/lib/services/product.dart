@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 class Product {
   final int id;
@@ -7,11 +8,11 @@ class Product {
   final int keszleten;
 
   Product({
-    @required this.id, 
-    @required this.nev, 
-    @required this.ar, 
-    @required this.keszleten
-    });
+    this.id, 
+    this.nev, 
+    this.ar, 
+    this.keszleten
+  });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(

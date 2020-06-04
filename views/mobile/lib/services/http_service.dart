@@ -1,7 +1,6 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
-import 'package:mobile/product.dart';
+import 'package:mobile/services/product.dart';
 
 class HttpService {
   final String url = "http://www.trophien.com:8080/products";
@@ -18,5 +17,10 @@ class HttpService {
     } else {
       throw "Can't get products.";
     }
+  }
+
+  Future<Response> deleteProduct(id) async {
+    Future<Response> res = delete("$url/$id");
+    return res;
   }
 }
