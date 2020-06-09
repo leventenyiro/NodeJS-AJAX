@@ -10,8 +10,8 @@ void main() => runApp(MaterialApp(
   },
   debugShowCheckedModeBanner: false,
   theme: ThemeData(
-    accentColor: Colors.blue[900],
-    primaryColor: Colors.blue[900],
+    accentColor: Colors.pink[900],
+    primaryColor: Colors.pink[900],
   ),
 ));
 
