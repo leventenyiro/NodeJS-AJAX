@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile/services/http_service.dart';
 
 class Insert extends StatefulWidget {
   @override
@@ -7,6 +8,8 @@ class Insert extends StatefulWidget {
 }
 
 class _InsertState extends State<Insert> {
+
+  HttpService httpService = new HttpService();
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +46,24 @@ class _InsertState extends State<Insert> {
     );
   }
 
-  List<bool> keszleten;
+  List<bool> keszlet;
 
   @override
   void initState() {
-    keszleten = [true, false];
+    keszlet = [true, false];
     super.initState();
   }
+
+  final inputNev = TextEditingController();
+  final inputAr = TextEditingController();
+  
+  @override
+  void dispose() {
+    inputNev.dispose();
+    inputAr.dispose();
+    super.dispose();
+  }
+  String keszleten = "Igen";
 
   Widget formInsert() {
     return Form(
@@ -57,6 +71,7 @@ class _InsertState extends State<Insert> {
         children: <Widget>[
           SizedBox(height: 20.0,),
           TextFormField(
+            controller: inputNev,
             decoration: InputDecoration(
               labelText: "Név",
               focusedBorder: OutlineInputBorder(
@@ -73,6 +88,7 @@ class _InsertState extends State<Insert> {
           ),
           SizedBox(height: 20.0,),
           TextFormField(
+            controller: inputAr,
             decoration: InputDecoration(
               labelText: "Ár",
               focusedBorder: OutlineInputBorder(
@@ -92,7 +108,7 @@ class _InsertState extends State<Insert> {
             ],
           ),
           SizedBox(height: 20.0,),
-          Row(
+          /*Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
@@ -106,17 +122,48 @@ class _InsertState extends State<Insert> {
                   Icon(Icons.close),
                   Icon(Icons.check),
                 ],
-                isSelected: keszleten,
+                isSelected: keszlet,
                 onPressed: (int index) {
                   setState(() {
-                    for (int i = 0; i < keszleten.length; i++) {
-                      keszleten[i] = i == index;
+                    for (int i = 0; i < keszlet.length; i++) {
+                      keszlet[i] = i == index;
                     }
+                    keszleten = index;
                   });
                 },
               ),
             ],
+          ),*/
+          DropdownButtonFormField<String>(
+            value: keszleten,
+            
+            icon: Icon(Icons.arrow_drop_down),
+            elevation: 16,
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.pink,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.pink,
+                ),
+              ),
+            ),
+            onChanged: (value) {
+              keszleten = value;
+            },
+            items: <String>["Igen", "Nem"].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
+
+
+
           SizedBox(height: 20.0,),
           Align(
             alignment: Alignment.bottomRight,
@@ -127,6 +174,9 @@ class _InsertState extends State<Insert> {
               ),
               onPressed: () {
                 setState(() {
+                  // keszleten
+                  httpService.insertProduct(inputNev.text, inputAr.text, keszleten);
+                  Navigator.popAndPushNamed(context, "/");
                 });
               },
             ),

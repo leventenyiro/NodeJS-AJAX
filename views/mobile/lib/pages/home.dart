@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
-            Navigator.pushNamed(context, "/insert");
+            Navigator.popAndPushNamed(context, "/insert");
           });
         },
         child: Icon(Icons.add),
