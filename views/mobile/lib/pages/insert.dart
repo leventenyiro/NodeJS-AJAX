@@ -10,6 +10,68 @@ class Insert extends StatefulWidget {
 class _InsertState extends State<Insert> {
 
   HttpService httpService = new HttpService();
+  String _nev;
+  String _ar;
+  bool _keszleten = false;
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Widget _buildNev() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: "Név",
+      ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return "Adj meg egy nevet";
+        }
+        return null;
+      },
+      onSaved: (value) {
+        _nev = value;
+      },
+    );
+  }
+  
+  Widget _buildAr() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: "Ár",
+      ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return "Adj meg egy árat";
+        } else if (int.tryParse(value) < 0) {
+          return "Az ár nem lehet kisebb, mint 0";
+        }
+        return null;
+      },
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[
+        WhitelistingTextInputFormatter.digitsOnly,
+      ],
+      onSaved: (value) {
+        _ar = value;
+      },
+    );
+  }
+  
+  Widget _buildKeszleten() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Készleten:"),
+        Checkbox(
+          value: _keszleten,
+          onChanged: (value) {
+            setState(() {
+              _keszleten = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,152 +99,42 @@ class _InsertState extends State<Insert> {
                     ),
                   ],
                 ),
-                formInsert(),
+                //formInsert(),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _buildNev(),
+                      _buildAr(),
+                      _buildKeszleten(),
+                      SizedBox(height: 10.0,),
+                      RaisedButton(
+                        child: Text("Rögzítés",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+                            _formKey.currentState.save();
+                            httpService.insertProduct(_nev, _ar, _keszleten ? "1" : "0");
+                            Navigator.popAndPushNamed(context, "/");
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  List<bool> keszlet;
-
-  @override
-  void initState() {
-    keszlet = [true, false];
-    super.initState();
-  }
-
-  final inputNev = TextEditingController();
-  final inputAr = TextEditingController();
-  
-  @override
-  void dispose() {
-    inputNev.dispose();
-    inputAr.dispose();
-    super.dispose();
-  }
-  String keszleten = "Igen";
-
-  Widget formInsert() {
-    return Form(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 20.0,),
-          TextFormField(
-            controller: inputNev,
-            decoration: InputDecoration(
-              labelText: "Név",
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 20.0,),
-          TextFormField(
-            controller: inputAr,
-            decoration: InputDecoration(
-              labelText: "Ár",
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              WhitelistingTextInputFormatter.digitsOnly,
-            ],
-          ),
-          SizedBox(height: 20.0,),
-          /*Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                "Készleten",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
-              ToggleButtons(
-                children: <Widget>[
-                  Icon(Icons.close),
-                  Icon(Icons.check),
-                ],
-                isSelected: keszlet,
-                onPressed: (int index) {
-                  setState(() {
-                    for (int i = 0; i < keszlet.length; i++) {
-                      keszlet[i] = i == index;
-                    }
-                    keszleten = index;
-                  });
-                },
-              ),
-            ],
-          ),*/
-          DropdownButtonFormField<String>(
-            value: keszleten,
-            
-            icon: Icon(Icons.arrow_drop_down),
-            elevation: 16,
-            decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.pink,
-                ),
-              ),
-            ),
-            onChanged: (value) {
-              keszleten = value;
-            },
-            items: <String>["Igen", "Nem"].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-
-
-
-          SizedBox(height: 20.0,),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: RaisedButton(
-              elevation: 5.0,
-              child: Text(
-                "Rögzítés",
-              ),
-              onPressed: () {
-                setState(() {
-                  // keszleten
-                  httpService.insertProduct(inputNev.text, inputAr.text, keszleten);
-                  Navigator.popAndPushNamed(context, "/");
-                });
-              },
-            ),
-          )
-        ],
-      )
     );
   }
 }

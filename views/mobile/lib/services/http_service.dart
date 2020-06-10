@@ -24,7 +24,7 @@ class HttpService {
     return res;
   }
 
-  Future<Response> insertProduct(String nev, String ar, int keszleten) {
+  Future<Response> insertProduct(String nev, String ar, String keszleten) {
     return post(
       "http://www.trophien.com:8080/products",
       headers: <String, String> {
