@@ -1,4 +1,4 @@
-this.domain = "http://www.trophien.com"
+this.domain = "http://localhost"
 this.port = "8080"
 this.data = []
 
@@ -103,15 +103,15 @@ function updateForm(id) {
                 <div class="modal-body">
                     <div style="padding: 2%; margin:auto">
                         <div class="form-group">
-                            <input class="form-control" type="text" id="input_upd_nev" placeholder="Név" value="${data[0].nev}">
+                            <input class="form-control" type="text" id="input_upd_nev" placeholder="Név" value="${data.nev}">
                         </div>
                         <div class="form-group">
-                            <input class="form-control" type="number" id="input_upd_ar" placeholder="Ár" value="${data[0].ar}">
+                            <input class="form-control" type="number" id="input_upd_ar" placeholder="Ár" value="${data.ar}">
                         </div>
                         <div class="form-group">
                             <p>Készleten</p>
                             <select class="form-control" id="input_upd_keszleten">`
-                            if (data[0].keszleten == 1) {
+                            if (data.keszleten == 1) {
                                 x += `
                                 <option value="1" selected>Igen</option>
                                 <option value="0">Nem</option>`
