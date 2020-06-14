@@ -33,7 +33,7 @@ class Database {
         var sql = `SELECT * FROM raktar WHERE id = ${req.params.id}`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
-            return callback(result)
+            return callback(result[0])
         })
     }
 
