@@ -37,4 +37,30 @@ class HttpService {
       }),
     );
   }
+
+  /*Future<Product> getProduct(id) async {
+    Response res = await get(url + "/$id");
+
+    if (res.statusCode == 200) {
+      print(json.decode(res.body));
+      return json.decode(res.body);
+    } else {
+      throw Exception();
+    }
+  }*/
+
+  Future<Response> updateProduct(String id, String nev, String ar, String keszleten) {
+    print("lefut");
+    return put(
+      "http://www.trophien.com:8080/products/$id",
+      headers: <String, String> {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: jsonEncode(<String, String> {
+        "nev": nev,
+        "ar": ar,
+        "keszleten": keszleten.toString()
+      }),
+    );
+  }
 }

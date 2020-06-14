@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import 'package:flutter_slidable/flutter_slidable.dart';
 import "package:mobile/services/http_service.dart";
 import 'package:mobile/services/product.dart';
-import "package:flutter_slidable/flutter_slidable.dart";
 
 class Home extends StatefulWidget {
   @override
@@ -11,7 +10,16 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  final HttpService httpService = HttpService();
+  HttpService httpService = HttpService();
+
+  void update(p) async {
+    Navigator.pushReplacementNamed(context, "/update", arguments: {
+      "id": p.id,
+      "nev": p.nev,
+      "ar": p.ar,
+      "keszleten": p.keszleten,
+    });
+  }
   
   Widget slideAble(p) {
     return Slidable(
@@ -29,6 +37,11 @@ class _HomeState extends State<Home> {
           caption: 'Update',
           color: Colors.blue[900],
           icon: Icons.edit,
+          onTap: () {
+            setState(() {
+              update(p);
+            });
+          },
         ),
         new IconSlideAction(
           caption: 'Delete',
@@ -70,7 +83,7 @@ class _HomeState extends State<Home> {
           }
           return Center(child: CircularProgressIndicator());
         }
-      )
+      ),
     );
   }
 }
