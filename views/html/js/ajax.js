@@ -1,4 +1,4 @@
-this.domain = "http://localhost"
+this.domain = "http://www.trophien.com"
 this.port = "8080"
 this.data = []
 
