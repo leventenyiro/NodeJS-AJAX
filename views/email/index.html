@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body onload="emailVerification()">
+    <div id="status"><h1>Loading...</h1></div>
+    <script>
+        function emailVerification() {
+            var xhr = new XMLHttpRequest()
+            var url = `http://localhost:8080/verification`
+            xhr.open("PUT", url, false)
+            xhr.setRequestHeader("Content-type", "application/json")
+            var email = new URL(window.location.href).searchParams.get("email")
+            xhr.send(JSON.stringify({ email: email }))
+            if (xhr.responseText == "success")
+                document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
+            else
+                document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"          
+            setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
+        }
+    </script>
+</body>
+</html>
