@@ -1,6 +1,6 @@
 var Database = require("../models/Database")
-const Bcrypt = require("../models/Bcrypt")
-const Mailsend = require("../models/Mailsend")
+var Bcrypt = require("../models/Bcrypt")
+var Mailsend = require("../models/Mailsend")
 
 exports.registration = (req, res) => {
     var db = new Database()
