@@ -9,8 +9,23 @@ class Database {
         })
     }
 
+    checkUsername(req, callback) {
+        this.conn.query(`SELECT * FROM user WHERE username = "${req.body.username}"`, (err, result) => {
+            if (err) throw err
+            return callback(result)
+        })
+    }
+
+    checkEmail(req, callback) {
+        this.conn.query(`SELECT * FROM user WHERE email = "${req.body.email}"`, (err, result) => {
+            if (err) throw err
+            return callback(result)
+        })
+    }
+    
     registration(req, password, callback) {
         this.generateNewHashedId()
+
         var sql = `INSERT INTO user (id, username, email, password, email_verified) VALUES (
             "${this.hashedUserId}",
             "${req.body.username}",
@@ -27,7 +42,8 @@ class Database {
     generateNewHashedId() {
         this.hashedUserId = require("crypto").randomBytes(10).toString("hex")
         this.conn.query(`SELECT COUNT(*) AS count FROM user WHERE id = "${this.hashedId}"`, (err, result) => {
-            if (result[0].count === 1) this.generateNewHashedId()
+            if (err) throw err
+            else if (result[0].count == 1) this.generateNewHashedId()
         })
     }
 
@@ -51,8 +67,8 @@ class Database {
     login(req, callback) {
         var sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
         this.conn.query(sql, (err, result) => {
-            if (err) return callback("error")
-            return callback()
+            if (err) throw error
+            return callback(result)
         })
     }
 

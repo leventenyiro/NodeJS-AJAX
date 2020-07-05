@@ -6,13 +6,29 @@ exports.registration = (req, res) => {
     var db = new Database()
     var bcrypt = new Bcrypt()
     bcrypt.encrypt(req.body.password, (password) => {
-        db.registration(req, password, (result) => {
-            if (result == "exists") res.send(result)
-            else var mailsend = new Mailsend(req)
-            res.send(result)
-            db.end()
+        db.checkUsername(req, (result) => {
+            if (result.length > 0) {
+                res.json({ error: "Username already exists" })
+                db.end()
+            }
+            else {
+                db.checkEmail(req, (result) => {
+                    if (result.length > 0) {
+                        res.json({ error: "E-mail address already exists" })
+                        db.end()
+                    } else {
+                        db.registration(req, password, (result) => {
+                            var mailsend = new Mailsend(req)
+                            res.json({ message: "Successful registration" })
+                            db.end()
+                        })
+                    }
+                })
+            }
+
         })
     })
+
 }
 
 exports.login = (req, res) => {
