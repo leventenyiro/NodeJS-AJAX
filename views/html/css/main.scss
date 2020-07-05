@@ -2,3 +2,24 @@ tr, td {
     width: 25%;
     text-align: center;
 }
+
+.btn {
+    width: 10em;
+}
+
+#card-position {
+    text-align: center;
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%)
+}
+
+#card {
+    min-width: 20em !important;
+    //position: relative;
+    border: 1px solid black !important;
+    border-radius: 15px;
+    padding: 2em;
+}

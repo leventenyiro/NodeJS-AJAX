@@ -12,11 +12,32 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 </head>
 <body>
-    <input id="inputUsername" type="text" placeholder="Username"><br>
-    <input id="inputEmail" type="text" placeholder="E-mail address"><br>
-    <input id="inputPassword" type="password" placeholder="Password"><br>
-    <button onclick="registration()">Regisztráció</button><br>
-    <button onclick="window.location.href='index.html'">Már van profilom</button><br>
-    <div id="status"></div>
+
+
+
+
+
+
+    <div id="card-position">
+        <div class="text-center col-4 card" id="card">
+            <div class="form-group">
+                <input class="form-control" id="inputUsername" type="text" placeholder="Username">
+            </div><br>
+            <div class="form-group">
+                <input class="form-control" id="inputEmail" type="text" placeholder="E-mail address">
+            </div><br>
+            <div class="form-group">
+                <input class="form-control" id="inputPassword" type="password" placeholder="Password">
+            </div><br>
+            <div class="form-group">
+                <input class="form-control" id="inputPasswordAgain" type="password" placeholder="Password again">
+            </div><br>
+            <div class="text-center">
+                <button class="btn btn-primary" onclick="registration()">Regisztráció</button><br><br>
+                <button class="btn btn-warning" onclick="window.location.href='index.html'">Már van profilom</button>
+            </div>
+            <div id="status"></div>
+        </div>
+    </div>
 </body>
 </html>
