@@ -10,13 +10,15 @@ class Mailsend {
             }
         })
 
+        var url = "http://localhost/nodejs/email.html?email="
+        
         var mailOptions = {
             from: "trophien.noreply@gmail.com",
             to: req.body.email,
             subject: "Email verification",
             html: `
                 <h1>Verificate your E-mail address</h1>
-                <a href="http://localhost/email/index.html?email=${req.body.email}">Verification</a>
+                <a href="${url}${req.body.email}">Verification</a>
                 `
         }
 
