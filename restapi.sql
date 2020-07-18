@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: localhost:3306
--- Létrehozás ideje: 2020. Máj 31. 20:51
+-- Létrehozás ideje: 2020. Júl 18. 18:15
 -- Kiszolgáló verziója: 10.0.28-MariaDB-2+b1
 -- PHP verzió: 7.3.11-1~deb10u1
 
@@ -17,10 +17,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Adatbázis: `ajax`
+-- Adatbázis: `restapi`
 --
-CREATE DATABASE IF NOT EXISTS `ajax` DEFAULT CHARACTER SET utf8 COLLATE utf8_hungarian_ci;
-USE `ajax`;
+CREATE DATABASE IF NOT EXISTS `restapi` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+USE `restapi`;
 
 -- --------------------------------------------------------
 
@@ -30,27 +30,24 @@ USE `ajax`;
 
 CREATE TABLE `raktar` (
   `id` int(11) NOT NULL,
-  `nev` varchar(150) COLLATE utf8_hungarian_ci NOT NULL,
+  `nev` varchar(150) COLLATE utf8_bin NOT NULL,
   `ar` int(11) NOT NULL,
-  `keszleten` tinyint(4) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+  `keszleten` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
 
 --
--- A tábla adatainak kiíratása `raktar`
+-- Tábla szerkezet ehhez a táblához `user`
 --
 
-INSERT INTO `raktar` (`id`, `nev`, `ar`, `keszleten`) VALUES
-(101, 'Étkezőasztal', 30000, 1),
-(100, 'Kanapé', 100000, 1),
-(102, 'Ágy', 80000, 1),
-(103, 'Polc', 10000, 1),
-(104, 'Szekrény', 21000, 0),
-(105, 'Dolgozóasztal', 20000, 1),
-(106, 'Számítógép', 250000, 1),
-(107, 'Laptop', 300000, 1),
-(108, 'Szék', 7000, 0),
-(109, 'Fiókos szekrény', 15000, 1),
-(110, 'Fali állvány', 6500, 1);
+CREATE TABLE `user` (
+  `id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `username` varchar(200) COLLATE utf8_bin NOT NULL,
+  `email` varchar(200) COLLATE utf8_bin NOT NULL,
+  `password` varchar(255) COLLATE utf8_bin NOT NULL,
+  `email_verified` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Indexek a kiírt táblákhoz
@@ -60,8 +57,15 @@ INSERT INTO `raktar` (`id`, `nev`, `ar`, `keszleten`) VALUES
 -- A tábla indexei `raktar`
 --
 ALTER TABLE `raktar`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- A tábla indexei `user`
+--
+ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `nev_idx` (`nev`);
+  ADD UNIQUE KEY `uc_username` (`username`),
+  ADD UNIQUE KEY `uc_email` (`email`);
 
 --
 -- A kiírt táblák AUTO_INCREMENT értéke
@@ -71,7 +75,7 @@ ALTER TABLE `raktar`
 -- AUTO_INCREMENT a táblához `raktar`
 --
 ALTER TABLE `raktar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
