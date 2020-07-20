@@ -8,5 +8,5 @@ Resources (links):
 
 ToDo's:
 
-[ ] Send email, when login
-[ ] Forgotten password
+ - [ ] Send email, when login
+ - [ ] Forgotten password
