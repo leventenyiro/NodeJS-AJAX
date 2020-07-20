@@ -8,6 +8,10 @@ router.put("/verification", controller.verification)
 
 router.post("/login", controller.login)
 
+router.get("/login", controller.getUser)
+
+router.post("/logout", controller.logout)
+
 router.get("/products", controller.getAll)
 
 router.post("/products", controller.post)

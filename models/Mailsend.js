@@ -6,7 +6,7 @@ class Mailsend {
             service: "gmail",
             auth: {
                 user: "trophien.noreply@gmail.com",
-                pass:"valami"
+                pass: "valami"
             }
         })
 

@@ -7,6 +7,7 @@ class Database {
             password: "",
             database: "restapi"
         })
+        this.hashedUserId = ""
     }
 
     checkUsername(req, callback) {
@@ -67,7 +68,15 @@ class Database {
     login(req, callback) {
         var sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
         this.conn.query(sql, (err, result) => {
-            if (err) throw error
+            if (err) throw err
+            return callback(result)
+        })
+    }
+
+    getUser(req, callback) {
+        var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
             return callback(result)
         })
     }

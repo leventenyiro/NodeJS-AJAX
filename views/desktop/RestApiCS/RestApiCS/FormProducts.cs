@@ -33,7 +33,7 @@ namespace RestApiCS
             products = JsonConvert.DeserializeObject<List<Product>>(input);
             foreach (var product in products)
             {
-                string[] row = { product.nev, Convert.ToString(product.ar), Convert.ToString(product.keszleten) };
+                string[] row = { product.nev, Convert.ToString(product.ar), product.keszleten == 0 ? "Nem" : "Igen" };
                 listViewProducts.Items.Add(new ListViewItem(row));
             }
         }
