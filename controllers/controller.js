@@ -17,18 +17,18 @@ exports.registration = (req, res) => {
                         res.json({ error: "E-mail address already exists" })
                         db.end()
                     } else {
-                        db.registration(req, password, (result) => {
-                            var mailsend = new Mailsend(req)
+                        db.registration(req, password)
+                        db.sendEmailVerification(req, (result) => {
+                            new Mailsend(req, result)
                             res.json({ message: "Successful registration" })
                             db.end()
                         })
                     }
                 })
             }
-
         })
     })
-
+    
 }
 
 exports.login = (req, res) => {
@@ -36,25 +36,33 @@ exports.login = (req, res) => {
     var bcrypt = new Bcrypt()
     db.login(req, (result) => {
         if (result.length > 0) {
-            if (result[0].email_verified == "0") res.json({ error: "E-mail address is not verificated"})
-            else {
+            if (result[0].email_verified == "0") {
+                db.sendEmailVerification(req, (result) => {
+                    new Mailsend(req, result)
+                    res.json({ message: "Please activate your e-mail address" })
+                    db.end()
+                })
+            } else {
                 bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
                     if (hash) {
                         req.session.userId = result[0].id
                         res.end()
+                        db.end()
                     } else {
                         res.statusCode = 401
                         res.json({ error: "Login is unsuccessful" })
+                        db.end()
                     }
                 })
             }
-        } else res.json({ error: "Login is unsuccessful" })
-        db.end()
+        } else {
+            res.json({ error: "Login is unsuccessful" })
+            db.end()
+        }
     })
 }
 
 exports.getUser = (req, res) => {
-    //var user = users.find(user => user.id === req.session.userId)
     var db = new Database()
     db.getUser(req, (result) => {
         res.json(result[0])

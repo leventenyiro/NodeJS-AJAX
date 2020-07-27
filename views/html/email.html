@@ -11,10 +11,10 @@
         function emailVerification() {
             var xhr = new XMLHttpRequest()
             var url = `http://localhost:8080/verification`
-            xhr.open("PUT", url, false)
+            xhr.open("POST", url, false)
             xhr.setRequestHeader("Content-type", "application/json")
-            var email = new URL(window.location.href).searchParams.get("email")
-            xhr.send(JSON.stringify({ email: email }))
+            var id = new URL(window.location.href).searchParams.get("id")
+            xhr.send(JSON.stringify({ id: id }))
             if (xhr.responseText == "success")
                 document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
             else

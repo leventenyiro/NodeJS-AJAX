@@ -7,7 +7,7 @@ class Database {
             password: "",
             database: "restapi"
         })
-        this.hashedUserId = ""
+        this.hashedId = ""
     }
 
     checkUsername(req, callback) {
@@ -24,46 +24,63 @@ class Database {
         })
     }
     
-    registration(req, password, callback) {
-        this.generateNewHashedId()
-
+    registration(req, password) {
+        this.generateNewHashedId(`user`)
         var sql = `INSERT INTO user (id, username, email, password, email_verified) VALUES (
-            "${this.hashedUserId}",
+            "${this.hashedId}",
             "${req.body.username}",
             "${req.body.email}",
             "${password}",
-            "0"
-        )`
+            "0")`
         this.conn.query(sql, (err) => {
             if (err) return callback("exists")
-            return callback("success")
         })
     }
 
-    generateNewHashedId() {
-        this.hashedUserId = require("crypto").randomBytes(10).toString("hex")
-        this.conn.query(`SELECT COUNT(*) AS count FROM user WHERE id = "${this.hashedId}"`, (err, result) => {
+    generateNewHashedId(table) {
+        this.hashedId = require("crypto").randomBytes(10).toString("hex")
+        var sql = `SELECT COUNT(*) AS count FROM ${table} WHERE id = "${this.hashedId}"`
+        this.conn.query(sql, (err, result) => {
             if (err) throw err
-            else if (result[0].count == 1) this.generateNewHashedId()
+            else if (result[0].count == 1) this.generateNewHashedId(table);
+        })
+    }
+
+    sendEmailVerification(req, callback) {
+        var sql = `SELECT id FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}" OR username = "${req.body.username}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
+                this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
+                    if (err) throw err
+                        this.generateNewHashedId(`email_verification`)
+                        var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
+                        this.conn.query(sql, (err) => {
+                            if (err) throw err
+                            return callback(this.hashedId)
+                        })
+                })
         })
     }
 
     emailVerification(req, callback) {
-        this.conn.query(`SELECT email_verified FROM user WHERE email="${req.body.email}"`, (err, result) => {
+        var sql = `SELECT u.id, email_verified FROM user u
+        LEFT JOIN email_verification e ON u.id = e.user_id
+        WHERE e.id = "${req.body.id}"`
+        this.conn.query(sql, (err, result) => {
             if (err) throw err
             else {
                 if (result[0].email_verified == 1) callback("already")
                 else {
-                    var sql = `UPDATE user SET email_verified = "1" WHERE email = "${req.body.email}"`
-                    this.conn.query(sql, (err) => {
-                        if (err) throw err
-                        return callback("success")
-                    })
+                    var sql = `UPDATE user SET email_verified = "1" WHERE id = "${result[0].id}"`
+                    this.conn.query(sql)
+                    this.conn.query(`DELETE FROM email_verification WHERE id = "${req.body.id}"`)
+                    return callback("success")
                 }
             }
         })
-
     }
+
+
 
     login(req, callback) {
         var sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`

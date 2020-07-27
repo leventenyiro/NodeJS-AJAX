@@ -1,16 +1,16 @@
 class Mailsend {
-    constructor(req) {
+    constructor(req, emailVerificationId) {
         var nodemailer = require("nodemailer")
 
         var transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
                 user: "trophien.noreply@gmail.com",
-                pass: "valami"
+                pass: ""
             }
         })
 
-        var url = "http://localhost/nodejs/email.html?email="
+        var url = "http://localhost/nodejs/email.html?id="
         
         var mailOptions = {
             from: "trophien.noreply@gmail.com",
@@ -18,7 +18,7 @@ class Mailsend {
             subject: "Email verification",
             html: `
                 <h1>Verificate your E-mail address</h1>
-                <a href="${url}${req.body.email}">Verification</a>
+                <a href="${url}${emailVerificationId}">Verification</a>
                 `
         }
 
