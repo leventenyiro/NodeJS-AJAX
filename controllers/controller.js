@@ -28,7 +28,6 @@ exports.registration = (req, res) => {
             }
         })
     })
-    
 }
 
 exports.login = (req, res) => {

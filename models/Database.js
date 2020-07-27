@@ -80,8 +80,6 @@ class Database {
         })
     }
 
-
-
     login(req, callback) {
         var sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
         this.conn.query(sql, (err, result) => {
