@@ -4,7 +4,7 @@ var controller = require("./controllers/controller")
 
 router.post("/registration", controller.registration)
 
-router.put("/verification", controller.verification)
+router.post("/verification", controller.verification)
 
 router.post("/login", controller.login)
 
