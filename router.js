@@ -6,6 +6,10 @@ router.post("/registration", controller.registration)
 
 router.post("/verification", controller.verification)
 
+router.post("/forgotpassword", controller.sendForgotPassword)
+
+router.put("/forgotpassword", controller.forgotPassword)
+
 router.post("/login", controller.login)
 
 router.get("/login", controller.getUser)

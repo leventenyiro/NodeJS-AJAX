@@ -68,6 +68,7 @@ class Database {
         WHERE e.id = "${req.body.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
+            else if (result.lenght == 0) callback("expired")
             else {
                 if (result[0].email_verified == 1) callback("already")
                 else {
@@ -76,6 +77,38 @@ class Database {
                     this.conn.query(`DELETE FROM email_verification WHERE id = "${req.body.id}"`)
                     return callback("success")
                 }
+            }
+        })
+    }
+
+    sendForgotPassword(req, callback) {
+        var sql = `SELECT id FROM user WHERE email = "${req.body.email}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
+            this.conn.query(`DELETE FROM forgot_password WHERE user_id = "${result[0].id}"`, (err) => {
+                if (err) throw err
+                this.generateNewHashedId(`forgot_password`)
+                var sql = `INSERT INTO forgot_password (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 7 day)`
+                this.conn.query(sql, (err) => {
+                    if (err) throw err
+                    return callback(this.hashedId)
+                })
+            })
+        })
+    }
+
+    forgotPassword(req, password, callback) {
+        // jelszó változtatás - req: id, password
+        var sql = `SELECT u.id AS id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
+            else if (result.lenght == 0) return callback("expired")
+            else {
+                var sql = `UPDATE user SET password = "${password}" WHERE id = "${result[0].id}"`
+                this.conn.query(sql, () => {
+                    this.conn.query(`DELETE FROM forgot_password WHERE id = "${req.body.id}"`)
+                    return callback("success")
+                })
             }
         })
     }

@@ -84,6 +84,25 @@ exports.verification = (req, res) => {
     })
 }
 
+exports.sendForgotPassword = (req, res) => {
+    var db = new Database()
+    db.sendForgotPassword(req, (result) => {
+        // email kiküldés - módosítani kell a Mailsend osztályt
+        res.send(result)
+        db.end()
+    })
+}
+
+exports.forgotPassword = (req, res) => {
+    var db = new Database()
+    bcrypt.encrypt(req.body.password, (password) => {
+        db.forgotPassword(req, password, (result) => {
+            res.send(result)
+            db.end()
+        })
+    })
+}
+
 exports.getAll = (req, res) => {
     var db = new Database()
     db.getAll(req, (result) => {
