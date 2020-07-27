@@ -9,4 +9,4 @@ Resources (links):
 ToDo's:
 
  - [x] Send email, when login
- - [ ] Forgotten password
+ - [ ] Forgot password
