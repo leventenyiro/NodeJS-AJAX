@@ -22,7 +22,7 @@ class Mailsend {
                 `
         }
 
-        transporter.sendMail(mailOptions, (err, data) => {
+        transporter.sendMail(mailOptions, (err) => {
             if (err) throw err
         })
     }
