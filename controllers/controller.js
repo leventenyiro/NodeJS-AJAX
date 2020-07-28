@@ -95,9 +95,10 @@ exports.sendForgotPassword = (req, res) => {
 
 exports.forgotPassword = (req, res) => {
     var db = new Database()
+    var bcrypt = new Bcrypt()
     bcrypt.encrypt(req.body.password, (password) => {
         db.forgotPassword(req, password, (result) => {
-            res.send(result)
+            res.json({ message: "E-mail has sent." })
             db.end()
         })
     })

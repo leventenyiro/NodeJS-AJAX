@@ -5,7 +5,7 @@ class Mailsend {
             service: "gmail",
             auth: {
                 user: "trophien.noreply@gmail.com",
-                pass: ""
+                pass: "TropHien2019"
             }
         })
         this.url = "http://localhost/nodejs/email.html?id="

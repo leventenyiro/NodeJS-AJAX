@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body onload="emailVerification()">
+    <div id="status"></div>
+    <input type="text" id="input_password" placeholder="Password">
+    <input type="text" id="input_password_again" placeholder="Password again">
+    <button onclick="forgotPassword()">Elküldés</button>
+    <script>
+        function forgotPassword() {
+            if (document.getElementById("input_password").value != "" && document.getElementById("input_password_again").value != "" && document.getElementById("input_password").value == document.getElementById("input_password_again").value) {
+                var xhr = new XMLHttpRequest()
+                var url = `http://localhost:8080/forgotpassword`
+                xhr.open("PUT", url, false)
+                xhr.setRequestHeader("Content-type", "application/json")
+                var id = new URL(window.location.href).searchParams.get("id")
+                xhr.send(JSON.stringify({ id: id, password: document.getElementById("input_password").value }))
+                setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
+            } else if (document.getElementById("input_password").value != document.getElementById("input_password_again").value)
+                document.getElementById("status").innerHTML = "<h1>Passwords doesn't correct!</h1>"
+            else
+                document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
+            document.getElementById("input_password").value = ""
+            document.getElementById("input_password_again").value = ""
+        }
+    </script>
+</body>
+</html>
