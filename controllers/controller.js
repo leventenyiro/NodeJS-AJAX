@@ -19,7 +19,7 @@ exports.registration = (req, res) => {
                     } else {
                         db.registration(req, password)
                         db.sendEmailVerification(req, (result) => {
-                            new Mailsend(req, result)
+                            new Mailsend(req).verification(result);
                             res.json({ message: "Successful registration" })
                             db.end()
                         })
@@ -37,7 +37,7 @@ exports.login = (req, res) => {
         if (result.length > 0) {
             if (result[0].email_verified == "0") {
                 db.sendEmailVerification(req, (result) => {
-                    new Mailsend(req, result)
+                    new Mailsend(req).verification(result);
                     res.json({ message: "Please activate your e-mail address" })
                     db.end()
                 })
@@ -87,7 +87,7 @@ exports.verification = (req, res) => {
 exports.sendForgotPassword = (req, res) => {
     var db = new Database()
     db.sendForgotPassword(req, (result) => {
-        // email kiküldés - módosítani kell a Mailsend osztályt
+        new Mailsend(req).forgotPassword(result);
         res.send(result)
         db.end()
     })
