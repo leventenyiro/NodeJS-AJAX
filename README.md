@@ -10,3 +10,5 @@ ToDo's:
 
  - [x] Send email, when login
  - [ ] Forgot password
+ - [ ] Password regex
+ - [ ] Check e-mail address, when forgot password
