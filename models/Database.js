@@ -1,11 +1,12 @@
+var parameter = require("../parameter.json")
 class Database {
     constructor() {
         var mysql = require("mysql")
         this.conn = mysql.createConnection({
-            host: "localhost",
-            user: "root",
-            password: "",
-            database: "restapi"
+            host: parameter.db.host,
+            user: parameter.db.user,
+            password: parameter.db.password,
+            database: parameter.db.database
         })
         this.hashedId = ""
     }
@@ -32,9 +33,7 @@ class Database {
             "${req.body.email}",
             "${password}",
             "0")`
-        this.conn.query(sql, (err) => {
-            if (err) return callback("exists")
-        })
+        this.conn.query(sql)
     }
 
     generateNewHashedId(table) {
@@ -50,15 +49,15 @@ class Database {
         var sql = `SELECT id FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}" OR username = "${req.body.username}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
-                this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
+            this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
+                if (err) throw err
+                this.generateNewHashedId(`email_verification`)
+                var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
+                this.conn.query(sql, (err) => {
                     if (err) throw err
-                        this.generateNewHashedId(`email_verification`)
-                        var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
-                        this.conn.query(sql, (err) => {
-                            if (err) throw err
-                            return callback(this.hashedId)
-                        })
+                    return callback(this.hashedId)
                 })
+            })
         })
     }
 

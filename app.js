@@ -4,6 +4,7 @@ var session = require("express-session")
 var bodyParser = require("body-parser")
 var router = require("./router")
 var cors = require("cors")
+var parameter = require("./parameter.json")
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -26,6 +27,6 @@ app.use((req, res) => {
     res.send("<h1>404 Error!</h1>")
 })
 
-app.listen(8080, () => {
+app.listen(parameter.app.port, () => {
     console.log("Server is running...")
 })

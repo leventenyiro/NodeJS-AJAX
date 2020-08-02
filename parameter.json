@@ -1,0 +1,16 @@
+{
+    "app": {
+        "port": 8080
+    },
+    "db": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "restapi"
+    },
+    "mailsend": {
+        "user": "trophien.noreply@gmail.com",
+        "password": "********",
+        "url": "http://localhost/nodejs/"
+    }
+}

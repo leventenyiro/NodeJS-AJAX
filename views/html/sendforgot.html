@@ -16,7 +16,7 @@
                 var url = `http://localhost:8080/forgotpassword`
                 xhr.open("POST", url, false)
                 xhr.setRequestHeader("Content-type", "application/json")
-                xhr.send(JSON.stringify({ id: id, email: document.getElementById("input_email").value }))
+                xhr.send(JSON.stringify({ email: document.getElementById("input_email").value }))
                 window.location.href = "http://www.trophien.com";
             } else
                 document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
