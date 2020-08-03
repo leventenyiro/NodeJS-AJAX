@@ -1,5 +1,4 @@
-this.domain = "http://localhost"
-this.port = "8080"
+var parameter = require("./parameter.json")
 
 function login() {
     var xhr = new XMLHttpRequest()
@@ -11,7 +10,7 @@ function login() {
 
     if (document.getElementById("inputUsernameEmail").value != "" && document.getElementById("inputPassword").value != "") {
         var data = { usernameEmail: usernameEmail, password: password }
-        var url = `${this.domain}:${this.port}/login`
+        var url = `${parameter.url}/login`
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify(data))
@@ -23,9 +22,7 @@ function login() {
         if ("id" in json) {
             console.log(json)
             responseText = json.id
-        }
-
-        else
+        } else
             responseText = json.error
         
     } else
@@ -44,7 +41,7 @@ function registration() {
 
     if (document.getElementById("inputUsername").value != "" && document.getElementById("inputEmail").value != "" && document.getElementById("inputPassword").value != "") {
         var data = { username: username, email: email, password: password }
-        var url = `${this.domain}:${this.port}/registration`
+        var url = `${parameter.url}/registration`
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify(data))
@@ -62,4 +59,31 @@ function registration() {
     } else
         responseText = "Ki kell tölteni mindent!"
     document.getElementById("status").innerHTML = `<h3>${responseText}</h3>`
+}
+
+function emailVerification() {
+    var xhr = new XMLHttpRequest()
+    var url = `${parameter.url}/verification`
+    xhr.open("POST", url, false)
+    xhr.setRequestHeader("Content-type", "application/json")
+    var id = new URL(window.location.href).searchParams.get("id")
+    xhr.send(JSON.stringify({ id: id }))
+    if (xhr.responseText == "success")
+        document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
+    else
+        document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"          
+    //setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
+    setTimeout(function() { window.close }, 100)
+}
+
+function sendForgotPassword() {
+    if (document.getElementById("input_email").value != "") {
+        var xhr = new XMLHttpRequest()
+        var url = `http://${parameter.url}/forgotpassword`
+        xhr.open("POST", url, false)
+        xhr.setRequestHeader("Content-type", "application/json")
+        xhr.send(JSON.stringify({ email: document.getElementById("input_email").value }))
+        window.location.href = "http://www.trophien.com";
+    } else
+        document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
 }
