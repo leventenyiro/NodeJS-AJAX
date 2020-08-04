@@ -104,3 +104,7 @@ function forgotPassword() {
     document.getElementById("input_password").value = ""
     document.getElementById("input_password_again").value = ""
 }
+
+function alert(response) {
+    // ide jön az alert a lekért válasszal
+}
