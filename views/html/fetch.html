@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch</title>
+</head>
+<body onload="getData()">
+    <div id="res"></div>
+    <script>
+        /*fetch("http://localhost:8080/products/100")
+        .then(response => response.json())
+        .then(data => console.log(data.nev))*/
+
+        async function getData() {
+            document.getElementById("res").innerHTML = "loading..."
+            const response = await fetch("http://localhost:8080/products", {
+                method: "GET"
+            }).then(response => response.json())
+            .then(document.getElementById("res").innerHTML = "")
+            .then(data => 
+                data.forEach(e => {
+                    document.getElementById("res").innerHTML += e.nev + "<br><br>"
+                })
+                //document.getElementById("res").innerHTML = data.nev
+            )
+            //document.getElementById("res").innerHTML = data.nev;
+        }
+    </script>
+</body>
+</html>

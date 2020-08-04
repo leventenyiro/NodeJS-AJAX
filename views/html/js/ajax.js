@@ -1,11 +1,11 @@
-var parameter = require("./parameter.json")
+this.url = "http://localhost:8080/"
 this.data = []
 
 function getAll() {
     var xhttp = new XMLHttpRequest()
 
     var search = document.getElementById("input_search").value
-    var url = `${parameter.url}/products`
+    var url = `${this.url}products`
     if (search != "") {
         url += `?search=${search}`
     }
@@ -63,7 +63,7 @@ function insert() {
 
     if (document.getElementById("input_nev").value != "" && document.getElementById("input_ar").value != "") {
         var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("POST", `${parameter.url}/products`, false)
+        xhttp.open("POST", `${this.url}products`, false)
         xhttp.setRequestHeader("Content-type", "application/json")
         xhttp.send(JSON.stringify(data))
 
@@ -77,7 +77,7 @@ function insert() {
 
 function torles(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("DELETE", `${parameter.url}/products/${id}`, false)
+    xhttp.open("DELETE", `${this.url}products/${id}`, false)
     xhttp.send()
     
     getAll()
@@ -85,7 +85,7 @@ function torles(id) {
 
 function updateForm(id) {
     var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", `${parameter.url}/products/${id}`, false)
+    xhttp.open("GET", `${this.url}products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
     document.getElementById("updateForm").innerHTML = ""
@@ -145,7 +145,7 @@ function update(id) {
 
     if (document.getElementById("input_upd_nev").value != "" && document.getElementById("input_upd_ar").value != "") {
         var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("PUT", `${parameter.url}/products/${id}`, false)
+        xhttp.open("PUT", `${this.url}products/${id}`, false)
         xhttp.setRequestHeader("Content-type", "application/json")
         xhttp.send(JSON.stringify(data))
 
@@ -158,11 +158,11 @@ function updateKeszleten(id) {
 
     var keszleten = document.getElementById("input_table_upd_keszleten").value
 
-    xhttp.open("GET", `${parameter.url}/products/${id}`, false)
+    xhttp.open("GET", `${this.url}products/${id}`, false)
     xhttp.send()
     var data = JSON.parse(xhttp.response)
 
-    xhttp.open("PUT", `${parameter.url}/products/${id}`, false)
+    xhttp.open("PUT", `${this.url}products/${id}`, false)
     xhttp.setRequestHeader("Content-type", "application/json")
     xhttp.send(JSON.stringify({nev: data[0].nev, ar: data[0].ar, keszleten: keszleten}))
 

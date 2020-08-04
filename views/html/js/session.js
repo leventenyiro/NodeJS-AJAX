@@ -1,4 +1,4 @@
-var parameter = require("./parameter.json")
+this.url = "http://localhost:8080/"
 
 function login() {
     var xhr = new XMLHttpRequest()
@@ -10,7 +10,7 @@ function login() {
 
     if (document.getElementById("inputUsernameEmail").value != "" && document.getElementById("inputPassword").value != "") {
         var data = { usernameEmail: usernameEmail, password: password }
-        var url = `${parameter.url}/login`
+        var url = `${this.url}login`
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify(data))
@@ -24,7 +24,6 @@ function login() {
             responseText = json.id
         } else
             responseText = json.error
-        
     } else
         responseText = "Ki kell tölteni mindent!"
     document.getElementById("status").innerHTML = `<h3>${responseText}</h3>`
@@ -41,7 +40,7 @@ function registration() {
 
     if (document.getElementById("inputUsername").value != "" && document.getElementById("inputEmail").value != "" && document.getElementById("inputPassword").value != "") {
         var data = { username: username, email: email, password: password }
-        var url = `${parameter.url}/registration`
+        var url = `${this.url}registration`
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify(data))
@@ -55,6 +54,7 @@ function registration() {
             console.log(json)
             responseText = json.error
         }
+        console.log(xhr.status)
         document.getElementById("inputPassword").value = ""
     } else
         responseText = "Ki kell tölteni mindent!"
@@ -63,7 +63,7 @@ function registration() {
 
 function emailVerification() {
     var xhr = new XMLHttpRequest()
-    var url = `${parameter.url}/verification`
+    var url = `${this.url}verification`
     xhr.open("POST", url, false)
     xhr.setRequestHeader("Content-type", "application/json")
     var id = new URL(window.location.href).searchParams.get("id")
@@ -79,7 +79,7 @@ function emailVerification() {
 function sendForgotPassword() {
     if (document.getElementById("input_email").value != "") {
         var xhr = new XMLHttpRequest()
-        var url = `http://${parameter.url}/forgotpassword`
+        var url = `${this.url}forgotpassword`
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify({ email: document.getElementById("input_email").value }))
@@ -91,7 +91,7 @@ function sendForgotPassword() {
 function forgotPassword() {
     if (document.getElementById("input_password").value != "" && document.getElementById("input_password_again").value != "" && document.getElementById("input_password").value == document.getElementById("input_password_again").value) {
         var xhr = new XMLHttpRequest()
-        var url = `http://localhost:8080/forgotpassword`
+        var url = `${this.url}forgotpassword`
         xhr.open("PUT", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         var id = new URL(window.location.href).searchParams.get("id")
