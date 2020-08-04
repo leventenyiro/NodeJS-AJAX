@@ -8,13 +8,13 @@ function checkEmail(email) {
 }
 
 function checkPassword(password) {
-    if (password.match(/[a-z]+/) && password.match(/[A-Z]+/) && password.match(/[0-9]+/))
-        return true
-    return false
+    return password.match(/[a-z]+/) && password.match(/[A-Z]+/) && password.match(/[0-9]+/) ? true : false
 }
 
-function checkRegistration(req, res) {
-    if (req.body.username.length < 6)
+function checkRegistration(req) {
+    if (req.body.username == "" || req.body.email == "" || req.body.password == "" || req.body.passwordAgain == "")
+        return "Something is missing!"
+    else if (req.body.username.length < 6)
         return "Username must be at least 6 character!"
     else if (!checkEmail(req.body.email))
         return "This e-mail address is not valid!"
@@ -27,7 +27,7 @@ function checkRegistration(req, res) {
 }
 
 exports.registration = (req, res) => {
-    var message = checkRegistration(req, res)
+    var message = checkRegistration(req)
     if (message != null)
         res.json({ message: message })
     else {
@@ -36,18 +36,18 @@ exports.registration = (req, res) => {
         bcrypt.encrypt(req.body.password, (password) => {
             db.checkUsername(req, (result) => {
                 if (result.length > 0) {
-                    res.json({ error: "Username already exists!" })
+                    res.json({ message: "Username already exists!" })
                     db.end()
-                }
-                else {
+                } else {
                     db.checkEmail(req, (result) => {
                         if (result.length > 0) {
-                            res.json({ error: "E-mail address already exists!" })
+                            res.json({ message: "E-mail address already exists!" })
                             db.end()
                         } else {
                             db.registration(req, password)
                             db.sendEmailVerification(req, (result) => {
                                 new Mailsend(req).verification(result);
+                                res.statusCode = 200;
                                 res.json({ message: "Successful registration!" })
                                 db.end()
                             })
@@ -60,6 +60,8 @@ exports.registration = (req, res) => {
 }
 
 exports.login = (req, res) => {
+    if (req.body.usernameEmail == "" || req.body.password == "")
+        res.json({ message: "Something is missing!" })
     var db = new Database()
     var bcrypt = new Bcrypt()
     db.login(req, (result) => {
@@ -114,20 +116,33 @@ exports.verification = (req, res) => {
 }
 
 exports.sendForgotPassword = (req, res) => {
+    if (req.body.email == "")
+        res.json({ message: "Please add your e-mail address!" })
     var db = new Database()
-    db.sendForgotPassword(req, (result) => {
-        new Mailsend(req).forgotPassword(result);
-        res.send(result)
-        db.end()
+    db.checkEmail(req, (result) => {
+        if (result.length == 0) {
+            res.json({ message: "There aren't user with this e-mail!" })
+            db.end()
+        } else {
+            db.sendForgotPassword(req, (result) => {
+                new Mailsend(req).forgotPassword(result);
+                res.statusCode = 200
+                res.send({ message: "E-mail has sent!" })
+                db.end()
+            })
+        }
     })
 }
 
 exports.forgotPassword = (req, res) => {
+    if (req.body.password == "" || req.body.passwordAgain == "")
+        res.json({ message: "Something is missing!" })
     var db = new Database()
     var bcrypt = new Bcrypt()
     bcrypt.encrypt(req.body.password, (password) => {
-        db.forgotPassword(req, password, (result) => {
-            res.json({ message: "E-mail has sent." })
+        db.forgotPassword(req, password, () => {
+            res.statusCode = 200
+            res.json({ message: "Successful password change!" })
             db.end()
         })
     })

@@ -87,3 +87,20 @@ function sendForgotPassword() {
     } else
         document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
 }
+
+function forgotPassword() {
+    if (document.getElementById("input_password").value != "" && document.getElementById("input_password_again").value != "" && document.getElementById("input_password").value == document.getElementById("input_password_again").value) {
+        var xhr = new XMLHttpRequest()
+        var url = `http://localhost:8080/forgotpassword`
+        xhr.open("PUT", url, false)
+        xhr.setRequestHeader("Content-type", "application/json")
+        var id = new URL(window.location.href).searchParams.get("id")
+        xhr.send(JSON.stringify({ id: id, password: document.getElementById("input_password").value }))
+        setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
+    } else if (document.getElementById("input_password").value != document.getElementById("input_password_again").value)
+        document.getElementById("status").innerHTML = "<h1>Passwords doesn't correct!</h1>"
+    else
+        document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
+    document.getElementById("input_password").value = ""
+    document.getElementById("input_password_again").value = ""
+}
