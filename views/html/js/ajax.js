@@ -1,18 +1,15 @@
 this.url = "http://localhost:8080/"
 this.data = []
 
-function getAll() {
-    var xhttp = new XMLHttpRequest()
-
+async function getAll() {
     var search = document.getElementById("input_search").value
     var url = `${this.url}products`
     if (search != "") {
         url += `?search=${search}`
     }
-
-    xhttp.open("GET", url, false)
-    xhttp.send()
-    newData = JSON.parse(xhttp.response)
+    var newData = await fetch(`${url}`, {
+        method: "GET"
+    }).then(newData => newData.json())
     if (JSON.stringify(this.data) != JSON.stringify(newData) || newData.length == 0) {
         this.data = newData
         list()
@@ -30,7 +27,7 @@ function list() {
                 <td>${i.nev}</td>
                 <td>${i.ar}</td>
                 <td>
-                    <select class="form-control" id="input_table_upd_keszleten" onchange="updateKeszleten(${i.id})">`
+                    <select class="form-control" id="input_table_upd_keszleten_${i.id}" onchange="updateKeszleten(${i.id})">`
                     if (i.keszleten == 1) {
                         x += `
                         <option value="1" selected>Igen</option>
@@ -54,40 +51,32 @@ function list() {
     document.getElementById("tbody").innerHTML += x;
 }
 
-function insert() {
-    var xhttp = new XMLHttpRequest()
-
+async function insert() {
     var nev = document.getElementById("input_nev").value
     var ar = document.getElementById("input_ar").value
     var keszleten = document.getElementById("input_keszleten").value
 
-    if (document.getElementById("input_nev").value != "" && document.getElementById("input_ar").value != "") {
-        var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("POST", `${this.url}products`, false)
-        xhttp.setRequestHeader("Content-type", "application/json")
-        xhttp.send(JSON.stringify(data))
-
-        document.getElementById("input_nev").value = ""
-        document.getElementById("input_ar").value = ""
-        document.getElementById("input_keszleten").value = 1
-    
-        getAll()
-    }
+    var data = { nev: nev, ar: ar, keszleten: keszleten }
+    await fetch(`${this.url}products`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    }).then(loadingAdd())
+    .then(getAll())
 }
 
-function torles(id) {
-    var xhttp = new XMLHttpRequest()
-    xhttp.open("DELETE", `${this.url}products/${id}`, false)
-    xhttp.send()
-    
-    getAll()
+async function torles(id) {
+    await fetch(`${this.url}products/${id}`, {
+        method: "DELETE"
+    }).then(getAll())
 }
 
-function updateForm(id) {
-    var xhttp = new XMLHttpRequest()
-    xhttp.open("GET", `${this.url}products/${id}`, false)
-    xhttp.send()
-    var data = JSON.parse(xhttp.response)
+async function updateForm(id) {
+    var data = await fetch(`${this.url}products/${id}`, {
+        method: "GET"
+    }).then(data => data.json())
     document.getElementById("updateForm").innerHTML = ""
     x = `
     <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -130,41 +119,47 @@ function updateForm(id) {
             </div>
         </div>
     </div>`
+    // jQuery-t ki kell váltani - BS5
     document.getElementById("updateForm").innerHTML = x
     $(document).ready(function() {
         $("#updateModal").modal("show")
     })
 }
 
-function update(id) {
-    var xhttp = new XMLHttpRequest()
-
+async function update(id) {
     var nev = document.getElementById("input_upd_nev").value
     var ar = document.getElementById("input_upd_ar").value
     var keszleten = document.getElementById("input_upd_keszleten").value
 
-    if (document.getElementById("input_upd_nev").value != "" && document.getElementById("input_upd_ar").value != "") {
-        var data = {nev: nev, ar: ar, keszleten: keszleten}
-        xhttp.open("PUT", `${this.url}products/${id}`, false)
-        xhttp.setRequestHeader("Content-type", "application/json")
-        xhttp.send(JSON.stringify(data))
-
-        getAll()
-    }
+    var data = { nev: nev, ar: ar, keszleten: keszleten }
+    await fetch(`${this.url}products/${id}`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    }).then(loadingAdd())
+    .then(getAll())
 }
 
-function updateKeszleten(id) {
-    var xhttp = new XMLHttpRequest()
+async function updateKeszleten(id) {
+    var keszleten = document.getElementById(`input_table_upd_keszleten_${id}`).value
+    var data = await fetch(`${this.url}products/${id}`, {
+        method: "GET"
+    }).then(data => data.json())
+    await fetch(`${this.url}products/${id}`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nev: data.nev, ar: data.ar, keszleten: keszleten })
+    }).then(getAll())
+}
 
-    var keszleten = document.getElementById("input_table_upd_keszleten").value
-
-    xhttp.open("GET", `${this.url}products/${id}`, false)
-    xhttp.send()
-    var data = JSON.parse(xhttp.response)
-
-    xhttp.open("PUT", `${this.url}products/${id}`, false)
-    xhttp.setRequestHeader("Content-type", "application/json")
-    xhttp.send(JSON.stringify({nev: data[0].nev, ar: data[0].ar, keszleten: keszleten}))
-
-    getAll()
+function loadingAdd() {
+    // töltőképernyő
+    document.getElementById("loading").classList.add("loading")
+}
+function loadingRemove() {
+    document.getElementById("loading").classList.remove("loading")
 }
