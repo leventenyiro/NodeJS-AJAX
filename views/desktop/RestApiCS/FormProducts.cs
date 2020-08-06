@@ -15,7 +15,7 @@ namespace RestApiCS
 {
     public partial class FormProducts : Form
     {
-        public string url = "http://192.168.0.2:8080/products";
+        public string url = "http://localhost:8080/products";
         private List<Product> products;
 
         public FormProducts()
