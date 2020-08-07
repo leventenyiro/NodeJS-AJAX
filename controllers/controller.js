@@ -62,34 +62,36 @@ exports.registration = (req, res) => {
 exports.login = (req, res) => {
     if (req.body.usernameEmail == "" || req.body.password == "")
         res.json({ message: "Something is missing!" })
-    var db = new Database()
-    var bcrypt = new Bcrypt()
-    db.login(req, (result) => {
-        if (result.length > 0) {
-            if (result[0].email_verified == "0") {
-                db.sendEmailVerification(req, (result) => {
-                    new Mailsend(req).verification(result);
-                    res.json({ message: "Please activate your e-mail address" })
-                    db.end()
-                })
+    else {
+        var db = new Database()
+        var bcrypt = new Bcrypt()
+        db.login(req, (result) => {
+            if (result.length > 0) {
+                if (result[0].email_verified == "0") {
+                    db.sendEmailVerification(req, (result) => {
+                        new Mailsend(req).verification(result);
+                        res.json({ message: "Please activate your e-mail address" })
+                        db.end()
+                    })
+                } else {
+                    bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
+                        if (hash) {
+                            req.session.userId = result[0].id
+                            res.end()
+                            db.end()
+                        } else {
+                            res.statusCode = 401
+                            res.json({ message: "Login is unsuccessful" })
+                            db.end()
+                        }
+                    })
+                }
             } else {
-                bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
-                    if (hash) {
-                        req.session.userId = result[0].id
-                        res.end()
-                        db.end()
-                    } else {
-                        res.statusCode = 401
-                        res.json({ error: "Login is unsuccessful" })
-                        db.end()
-                    }
-                })
+                res.json({ message: "Login is unsuccessful" })
+                db.end()
             }
-        } else {
-            res.json({ error: "Login is unsuccessful" })
-            db.end()
-        }
-    })
+        })
+    }
 }
 
 exports.getUser = (req, res) => {

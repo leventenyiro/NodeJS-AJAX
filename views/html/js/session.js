@@ -1,32 +1,20 @@
 this.url = "http://localhost:8080/"
 
-function login() {
-    var xhr = new XMLHttpRequest()
-
-    var responseText = ""
-
+async function login() {
     var usernameEmail = document.getElementById("inputUsernameEmail").value
     var password = document.getElementById("inputPassword").value
 
-    if (document.getElementById("inputUsernameEmail").value != "" && document.getElementById("inputPassword").value != "") {
-        var data = { usernameEmail: usernameEmail, password: password }
-        var url = `${this.url}login`
-        xhr.open("POST", url, false)
-        xhr.setRequestHeader("Content-type", "application/json")
-        xhr.send(JSON.stringify(data))
-
-        document.getElementById("inputUsernameEmail").value = ""
-        document.getElementById("inputPassword").value = ""
-
-        var json = JSON.parse(xhr.response)
-        if ("id" in json) {
-            console.log(json)
-            responseText = json.id
-        } else
-            responseText = json.error
-    } else
-        responseText = "Ki kell tölteni mindent!"
-    document.getElementById("status").innerHTML = `<h3>${responseText}</h3>`
+    var response = await fetch(`${this.url}login`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ usernameEmail: usernameEmail, password: password })
+    }).then(response => response.json())
+    //if (!"id" in response) {
+        this.response(response)
+    //}
+        
 }
 
 function registration() {
@@ -61,17 +49,20 @@ function registration() {
     document.getElementById("status").innerHTML = `<h3>${responseText}</h3>`
 }
 
-function emailVerification() {
-    var xhr = new XMLHttpRequest()
-    var url = `${this.url}verification`
-    xhr.open("POST", url, false)
-    xhr.setRequestHeader("Content-type", "application/json")
+async function emailVerification() {
     var id = new URL(window.location.href).searchParams.get("id")
-    xhr.send(JSON.stringify({ id: id }))
-    if (xhr.responseText == "success")
+    var response = await fetch(`${this.url}verification`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id })
+    }).then(response => response.text())
+    console.log(response)
+    if (response == "success")
         document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
     else
-        document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"          
+        document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"
     //setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
     setTimeout(function() { window.close }, 100)
 }
@@ -105,6 +96,20 @@ function forgotPassword() {
     document.getElementById("input_password_again").value = ""
 }
 
-function alert(response) {
+function response(response) {
     // ide jön az alert a lekért válasszal
+    document.getElementById("response").innerHTML = `
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content error-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">${response.message}</div>
+            </div>
+        </div>
+    </div>`
 }

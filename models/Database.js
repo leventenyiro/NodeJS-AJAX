@@ -49,15 +49,15 @@ class Database {
         var sql = `SELECT id FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}" OR username = "${req.body.username}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
-            this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
-                if (err) throw err
+            /*this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
+                if (err) throw err*/
                 this.generateNewHashedId(`email_verification`)
                 var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
                 this.conn.query(sql, (err) => {
                     if (err) throw err
                     return callback(this.hashedId)
                 })
-            })
+            //})
         })
     }
 
@@ -73,7 +73,7 @@ class Database {
                 else {
                     var sql = `UPDATE user SET email_verified = "1" WHERE id = "${result[0].id}"`
                     this.conn.query(sql)
-                    this.conn.query(`DELETE FROM email_verification WHERE id = "${req.body.id}"`)
+                    this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`)
                     return callback("success")
                 }
             }

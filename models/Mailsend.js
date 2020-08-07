@@ -13,9 +13,11 @@ class Mailsend {
     }
 
     verification(emailVerificationId) {
+        var email = this.req.body.email
+        if (email == undefined) email = this.req.body.usernameEmail
         this.mailOptions = {
             from: parameter.mailsend.user,
-            to: this.req.body.email,
+            to: email,
             subject: "Email verification",
             html: `
                 <h1>Verificate your E-mail address</h1>
