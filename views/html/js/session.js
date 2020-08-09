@@ -11,10 +11,10 @@ async function login() {
         },
         body: JSON.stringify({ usernameEmail: usernameEmail, password: password })
     }).then(response => response.json())
-    //if (!"id" in response) {
-        this.response(response)
-    //}
-        
+    this.response(response)
+    if ("success" in response) {
+        window.location = "./table.html"
+    }
 }
 
 function registration() {
@@ -97,19 +97,32 @@ function forgotPassword() {
 }
 
 function response(response) {
+    var header = ""
+    var css = ""
+    var message = ""
+    if ("success" in response) {
+        header = "Success"
+        css = "success-modal-content"
+        message = response.success
+    } else if ("error" in response) {
+        header = "Error"
+        css = "error-modal-content"
+        message = response.error
+    }
     // ide jön az alert a lekért válasszal
     document.getElementById("response").innerHTML = `
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content error-modal-content">
+            <div class="modal-content ${css}">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <h5 class="modal-title" id="errorModalLabel">${header}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">${response.message}</div>
+                <div class="modal-body">${message}</div>
             </div>
         </div>
     </div>`
+    $('#successModal').modal("show")
 }
