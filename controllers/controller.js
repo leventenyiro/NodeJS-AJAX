@@ -112,7 +112,7 @@ exports.logout = (req, res) => {
 exports.verification = (req, res) => {
     var db = new Database()
     db.emailVerification(req, (result) => {
-        res.send(result)
+        res.json(result)
         db.end()
     })
 }

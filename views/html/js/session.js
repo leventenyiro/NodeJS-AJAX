@@ -7,46 +7,39 @@ async function login() {
     var response = await fetch(`${this.url}login`, {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
+        credentials: "include",
         body: JSON.stringify({ usernameEmail: usernameEmail, password: password })
     }).then(response => response.json())
-    this.response(response)
-    if ("success" in response) {
-        window.location = "./table.html"
+    if ("error" in response) {
+        this.response(response)
+        document.getElementById("inputPassword").value = ""
+    } else if ("success" in response) {
+        //window.location = "./table.html"
     }
 }
 
-function registration() {
-    var xhr = new XMLHttpRequest()
-
-    var responseText = ""
-
+async function registration() {
     var username = document.getElementById("inputUsername").value
     var email = document.getElementById("inputEmail").value
     var password = document.getElementById("inputPassword").value
+    var passwordAgain = document.getElementById("inputPasswordAgain").value
 
-    if (document.getElementById("inputUsername").value != "" && document.getElementById("inputEmail").value != "" && document.getElementById("inputPassword").value != "") {
-        var data = { username: username, email: email, password: password }
-        var url = `${this.url}registration`
-        xhr.open("POST", url, false)
-        xhr.setRequestHeader("Content-type", "application/json")
-        xhr.send(JSON.stringify(data))
-
-        var json = JSON.parse(xhr.response)
-        if ("message" in json) {
-            document.getElementById("inputUsername").value = ""
-            document.getElementById("inputEmail").value = ""
-            window.location.href="index.html"
-        } else {
-            console.log(json)
-            responseText = json.error
-        }
-        console.log(xhr.status)
+    var response = await fetch(`${this.url}registration`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username, email: email, password: password, passwordAgain: passwordAgain })
+    }).then(response => response.json())
+    if ("error" in response) {
         document.getElementById("inputPassword").value = ""
-    } else
-        responseText = "Ki kell tölteni mindent!"
-    document.getElementById("status").innerHTML = `<h3>${responseText}</h3>`
+        document.getElementById("inputPasswordAgain").value = ""
+    }
+    this.response(response)
+    if ("success" in response)
+        setTimeout(function() { window.location = "index.html", 1000})
 }
 
 async function emailVerification() {

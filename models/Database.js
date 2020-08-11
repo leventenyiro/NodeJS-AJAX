@@ -67,15 +67,12 @@ class Database {
         WHERE e.id = "${req.body.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
-            else if (result.lenght == 0) callback("expired")
+            else if (result.length == 0) return callback({ message: "This e-mail verification is expired."})
             else {
-                if (result[0].email_verified == 1) callback("already")
-                else {
-                    var sql = `UPDATE user SET email_verified = "1" WHERE id = "${result[0].id}"`
-                    this.conn.query(sql)
-                    this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`)
-                    return callback("success")
-                }
+                var sql = `UPDATE user SET email_verified = "1" WHERE id = "${result.id}"`
+                this.conn.query(sql)
+                this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result.id}"`)
+                return callback({ message: "Successful e-mail verification." })
             }
         })
     }
