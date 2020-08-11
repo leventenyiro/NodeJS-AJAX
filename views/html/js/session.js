@@ -16,7 +16,7 @@ async function login() {
         this.response(response)
         document.getElementById("inputPassword").value = ""
     } else if ("success" in response) {
-        //window.location = "./table.html"
+        window.location = "./table.html"
     }
 }
 
@@ -51,13 +51,12 @@ async function emailVerification() {
         },
         body: JSON.stringify({ id: id })
     }).then(response => response.text())
-    console.log(response)
     if (response == "success")
         document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
     else
         document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"
     //setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
-    setTimeout(function() { window.close }, 100)
+    setTimeout(function() { window.location = "index.html" }, 100)
 }
 
 function sendForgotPassword() {
@@ -67,7 +66,7 @@ function sendForgotPassword() {
         xhr.open("POST", url, false)
         xhr.setRequestHeader("Content-type", "application/json")
         xhr.send(JSON.stringify({ email: document.getElementById("input_email").value }))
-        window.location.href = "http://www.trophien.com";
+        window.location = "index.html";
     } else
         document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
 }
@@ -80,7 +79,7 @@ function forgotPassword() {
         xhr.setRequestHeader("Content-type", "application/json")
         var id = new URL(window.location.href).searchParams.get("id")
         xhr.send(JSON.stringify({ id: id, password: document.getElementById("input_password").value }))
-        setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
+        setTimeout(function() { window.location = "index.html" }, 100)
     } else if (document.getElementById("input_password").value != document.getElementById("input_password_again").value)
         document.getElementById("status").innerHTML = "<h1>Passwords doesn't correct!</h1>"
     else
@@ -118,4 +117,27 @@ function response(response) {
         </div>
     </div>`
     $('#successModal').modal("show")
+}
+
+
+async function getUser() {
+    var res = await fetch(`${this.url}login`, {
+        method: "GET",
+        credentials: "include"
+    }).then(res => res.json())
+    if ("error" in res)
+        window.location = "index.html"
+    else {
+        document.getElementById("username").innerHTML = `${res.username} ${res.id} ${res.email}`
+        require("./ajax").getAll()
+    }
+        
+}
+
+async function logout() {
+    await fetch(`${this.url}logout`, {
+        method: "POST",
+        credentials: "include"
+    })
+    window.location = "index.html"
 }

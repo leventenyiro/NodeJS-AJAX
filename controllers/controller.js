@@ -97,7 +97,11 @@ exports.login = (req, res) => {
 exports.getUser = (req, res) => {
     var db = new Database()
     db.getUser(req, (result) => {
-        res.json(result[0])
+        if (result == undefined)
+            res.json({ error: "You aren't logged in" })
+        else
+            res.json(result)
+        db.end()
     })
 }
 
