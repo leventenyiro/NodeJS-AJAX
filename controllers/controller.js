@@ -18,12 +18,12 @@ function checkRegistration(req) {
         return "Username must be at least 6 character!"
     else if (!checkEmail(req.body.email))
         return "This e-mail address is not valid!"
-    else if (req.body.password != req.body.passwordAgain)
-        return "Passwords aren't equal!"
     else if (req.body.password.length < 8)
         return "Password must be at least 8 character!"
     else if (!checkPassword(req.body.password))
         return "Password must contains at least 1 upper-character and 1 number!"
+    else if (req.body.password != req.body.passwordAgain)
+        return "Passwords aren't equal!"
 }
 
 exports.registration = (req, res) => {

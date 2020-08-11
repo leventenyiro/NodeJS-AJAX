@@ -9,6 +9,6 @@ Resources (links):
 ToDo's:
 
  - [x] Send email, when login
- - [ ] Forgot password
- - [ ] Password regex
+ - [x] Forgot password
+ - [x] Password regex
  - [ ] Check e-mail address, when forgot password
