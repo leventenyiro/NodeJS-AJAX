@@ -26,6 +26,17 @@ function checkRegistration(req) {
         return "Passwords aren't equal!"
 }
 
+function checkForgotPassword(req) {
+    if (req.body.password == "" || req.body.passwordAgain == "")
+        return "Something is missing!"
+    else if (req.body.password.length < 8)
+        return "Password must be at least 8 character!"
+    else if (!checkPassword(req.body.password))
+        return "Password must contains at least 1 upper-character and 1 number!"
+    else if (req.body.password != req.body.passwordAgain)
+        return "Passwords aren't equal!"
+}
+
 exports.registration = (req, res) => {
     var error = checkRegistration(req)
     if (error != null)
@@ -141,17 +152,28 @@ exports.sendForgotPassword = (req, res) => {
 }
 
 exports.forgotPassword = (req, res) => {
-    if (req.body.password == "" || req.body.passwordAgain == "")
-        res.json({ error: "Something is missing!" })
     var db = new Database()
-    var bcrypt = new Bcrypt()
-    bcrypt.encrypt(req.body.password, (password) => {
-        db.forgotPassword(req, password, () => {
-            res.statusCode = 200
-            res.json({ success: "Successful password change!" })
-            db.end()
-        })
+    db.checkForgotPasswordId(req, (result) => {
+        if (result.length == 0) {
+            res.json({ error: "This isn't a valid token!" })
+        } else {
+            var error = checkForgotPassword(req)
+            if (error != null)
+                res.json({ error: error })
+            else {
+                var db = new Database()
+                var bcrypt = new Bcrypt()
+                bcrypt.encrypt(req.body.password, (password) => {
+                    db.forgotPassword(req, password, () => {
+                        //res.statusCode = 200
+                        res.json({ success: "Successful password change!" })
+                        db.end()
+                    })
+                })
+            }
+        }
     })
+    
 }
 
 exports.getAll = (req, res) => {

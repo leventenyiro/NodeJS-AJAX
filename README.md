@@ -11,4 +11,4 @@ ToDo's:
  - [x] Send email, when login
  - [x] Forgot password
  - [x] Password regex
- - [ ] Check e-mail address, when forgot password
+ - [x] Check e-mail address, when forgot password

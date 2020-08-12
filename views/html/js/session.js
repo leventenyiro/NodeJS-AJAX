@@ -55,37 +55,42 @@ async function emailVerification() {
         document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
     else
         document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"
-    //setTimeout(function() { window.location.href = "http://www.trophien.com" }, 100)
-    setTimeout(function() { window.location = "index.html" }, 100)
+    setTimeout(function() { window.close() }, 100)
 }
 
-function sendForgotPassword() {
-    if (document.getElementById("input_email").value != "") {
-        var xhr = new XMLHttpRequest()
-        var url = `${this.url}forgotpassword`
-        xhr.open("POST", url, false)
-        xhr.setRequestHeader("Content-type", "application/json")
-        xhr.send(JSON.stringify({ email: document.getElementById("input_email").value }))
-        window.location = "index.html";
+async function sendForgotPassword() {
+    var email = document.getElementById("input_email").value
+    var res = await fetch(`${this.url}forgotpassword`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+    }).then(res => res.json())
+    if ("error" in res) {
+        document.getElementById("input_email").value = ""
+        this.response(res)
     } else
-        document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
+        window.location = "index.html"
 }
 
-function forgotPassword() {
-    if (document.getElementById("input_password").value != "" && document.getElementById("input_password_again").value != "" && document.getElementById("input_password").value == document.getElementById("input_password_again").value) {
-        var xhr = new XMLHttpRequest()
-        var url = `${this.url}forgotpassword`
-        xhr.open("PUT", url, false)
-        xhr.setRequestHeader("Content-type", "application/json")
-        var id = new URL(window.location.href).searchParams.get("id")
-        xhr.send(JSON.stringify({ id: id, password: document.getElementById("input_password").value }))
-        setTimeout(function() { window.location = "index.html" }, 100)
-    } else if (document.getElementById("input_password").value != document.getElementById("input_password_again").value)
-        document.getElementById("status").innerHTML = "<h1>Passwords doesn't correct!</h1>"
-    else
-        document.getElementById("status").innerHTML = "<h1>You have to fill all of the form!</h1>"
-    document.getElementById("input_password").value = ""
-    document.getElementById("input_password_again").value = ""
+async function forgotPassword() {
+    var password = document.getElementById("input_password").value
+    var passwordAgain = document.getElementById("input_password_again").value
+    var id = new URL(window.location.href).searchParams.get("id")
+    var res = await fetch(`${this.url}forgotpassword`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id, password: password, passwordAgain: passwordAgain })
+    }).then(res => res.json())
+    if ("error" in res) {
+        document.getElementById("input_password").value = ""
+        document.getElementById("input_password_again").value = ""
+        this.response(res)
+    } else
+        window.close()
 }
 
 function response(response) {
@@ -101,7 +106,6 @@ function response(response) {
         css = "error-modal-content"
         message = response.error
     }
-    // ide jön az alert a lekért válasszal
     document.getElementById("response").innerHTML = `
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -131,7 +135,6 @@ async function getUser() {
         document.getElementById("username").innerHTML = `${res.username} ${res.id} ${res.email}`
         require("./ajax").getAll()
     }
-        
 }
 
 async function logout() {

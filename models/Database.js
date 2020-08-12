@@ -93,8 +93,16 @@ class Database {
         })
     }
 
+    checkForgotPasswordId(req, callback) {
+        var sql = `SELECT u.id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
+            else
+                return callback(result)
+        })
+    }
+
     forgotPassword(req, password, callback) {
-        // jelszó változtatás - req: id, password
         var sql = `SELECT u.id AS id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
