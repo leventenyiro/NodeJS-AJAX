@@ -26,4 +26,10 @@ router.put("/products/:id", controller.put)
 
 router.delete("/products/:id", controller.delete)
 
+router.post("/favorite/:id", controller.addFavorite)
+
+router.get("/favorite", controller.getFavorite)
+
+router.delete("/favorite/:id", controller.removeFavorite)
+
 module.exports = router

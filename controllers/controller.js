@@ -221,3 +221,25 @@ exports.delete = (req, res) => {
         })
     })
 }
+
+exports.addFavorite = (req, res) => {
+    var db = new Database()
+    db.addFavorite(req)
+    res.end()
+    db.end()
+}
+
+exports.getFavorite = (req, res) => {
+    var db = new Database()
+    db.getFavorite(req, (result) => {
+        res.json(result)
+        db.end()
+    })
+}
+
+exports.removeFavorite = (req, res) => {
+    var db = new Database()
+    db.removeFavorite(req)
+    res.end()
+    db.end()
+}

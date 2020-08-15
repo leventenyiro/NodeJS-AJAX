@@ -134,11 +134,11 @@ class Database {
     }
 
     getAll(req, callback) {
-        var sql = "SELECT * FROM raktar"
+        var sql = "SELECT * FROM product"
         if (req.query.search != undefined) {
-            sql += ` WHERE nev LIKE "${req.query.search}%"`
+            sql += ` WHERE name LIKE "${req.query.search}%"`
         }
-        sql += " ORDER BY id"
+        sql += " ORDER BY name"
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result)
@@ -146,7 +146,8 @@ class Database {
     }
 
     post(req, callback) {
-        var sql = `INSERT INTO raktar (nev, ar, keszleten) VALUES ("${req.body.nev}",${req.body.ar}, ${req.body.keszleten})`
+        this.generateNewHashedId(`product`)
+        var sql = `INSERT INTO product (id, name, price, availability) VALUES ("${this.hashedId}", "${req.body.name}",${req.body.price}, ${req.body.availability})`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result)
@@ -154,7 +155,7 @@ class Database {
     }
 
     getOne(req, callback) {
-        var sql = `SELECT * FROM raktar WHERE id = ${req.params.id}`
+        var sql = `SELECT * FROM product WHERE id = "${req.params.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result[0])
@@ -162,7 +163,7 @@ class Database {
     }
 
     put(req, callback) {
-        var sql = `UPDATE raktar SET nev = "${req.body.nev}", ar = ${req.body.ar}, keszleten = ${req.body.keszleten} WHERE id = ${req.params.id}`
+        var sql = `UPDATE product SET name = "${req.body.name}", price = ${req.body.price}, availability = ${req.body.availability} WHERE id = "${req.params.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result)
@@ -170,11 +171,32 @@ class Database {
     }
 
     delete(req, callback) {
-        var sql = `DELETE FROM raktar WHERE id = ${req.params.id}`
+        var sql = `DELETE FROM product WHERE id = "${req.params.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result)
         })
+    }
+
+    addFavorite(req) {
+        this.generateNewHashedId(`favorite`)
+        this.conn.query(`INSERT INTO favorite (id, product_id, user_id) VALUES ("${this.hashedId}", "${req.body.productId}", "${req.session.userId}")`)
+    }
+
+    getFavorite(req, callback) {
+        var sql = `SELECT f.id "favoriteId", p.name "name", p.price "price", p.availability "availability" FROM favorite f INNER JOIN product p ON f.product_id = p.id WHERE user_id = "${req.session.userId}"`
+        if (req.query.search != undefined) {
+            sql += ` AND name LIKE "${req.query.search}%"`
+        }
+        sql += " ORDER BY name"
+        this.conn.query(sql, (err, result) => {
+            if (err) throw err
+            return callback(result)
+        })
+    }
+
+    removeFavorite(req) {
+        this.conn.query(`DELETE FROM favorite WHERE id = "${req.body.id}"`)
     }
 
     end() {
