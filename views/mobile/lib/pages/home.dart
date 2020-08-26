@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter/services.dart';
 import "package:mobile/services/http_service.dart";
-import 'package:mobile/services/product.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -10,79 +9,108 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  HttpService httpService = HttpService();
+  HttpService httpService = new HttpService();
+  String _usernameEmail;
+  String _password;
 
-  void update(p) async {
-    Navigator.pushReplacementNamed(context, "/update", arguments: {
-      "id": p.id,
-      "nev": p.nev,
-      "ar": p.ar,
-      "keszleten": p.keszleten,
-    });
-  }
-  
-  Widget slideAble(p) {
-    return Slidable(
-      actionPane: SlidableDrawerActionPane(),
-      actionExtentRatio: 0.25,
-      child: new Container(
-        color: Colors.white,
-        child: new ListTile(
-          title: new Text(p.nev),
-          subtitle: new Text(p.ar.toString()),
-        ),
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Widget _buildUsernameEmail() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: "Username or e-mail",
       ),
-      secondaryActions: <Widget>[
-        new IconSlideAction(
-          caption: 'Update',
-          color: Colors.blue[900],
-          icon: Icons.edit,
-          onTap: () {
-            setState(() {
-              update(p);
-            });
-          },
-        ),
-        new IconSlideAction(
-          caption: 'Delete',
-          color: Colors.red,
-          icon: Icons.delete,
-          onTap: () {
-            setState(() {
-              httpService.deleteProduct(p.id);
-            });
-          },
-        ),
-      ],
+      onSaved: (value) {
+        _usernameEmail = value;
+      },
     );
   }
 
+  Widget _buildPassword() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: "Password",
+      ),
+      onSaved: (value) {
+        _password = value;
+      },
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Raktár"),
-        centerTitle: true,
+    return AnnotatedRegion(
+      // usernameEmail, password
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            Navigator.popAndPushNamed(context, "/insert");
-          });
-        },
-        child: Icon(Icons.add),
-      ),
-      body: FutureBuilder(
-        future: httpService.getProducts(),
-        builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
-          if (snapshot.hasData) {
-            List<Product> products = snapshot.data;
-            return ListView(
-              children: products.map((p) => slideAble(p)).toList()
-            );
-          }
-          return Center(child: CircularProgressIndicator());
-        }
+      child: Scaffold(
+        /*body: Container(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Colors.red, Colors.blue]
+                  )
+                ),
+              )
+            ],
+          ),
+        ),*/
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ],
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _buildUsernameEmail(),
+                      _buildPassword(),
+                      SizedBox(height: 10.0,),
+                      RaisedButton(
+                        child: Text("Login",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _formKey.currentState.save();
+                            String res = httpService.login(_usernameEmail, _password).toString().toString();
+                            debugPrint(res);
+                          });
+                        },
+                      )
+                    ],
+                  )
+                )
+              ],
+            )
+          )
+        )
       ),
     );
   }

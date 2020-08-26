@@ -1,12 +1,28 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:mobile/services/product.dart';
 
+
 class HttpService {
-  final String url = "http://www.trophien.com:8080/products";
+  final String url = "http://www.trophien.com:8080";
   
+  Future<String> login(usernameEmail, password) async {
+    Response res = await post(
+      "$url/login",
+      headers: <String, String> {
+        "Content-Type": "application/json; charset=UTF-8"
+      },
+      body: jsonEncode(<String, String> {
+        "usernameEmail": usernameEmail,
+        "password": password
+      })
+    );
+    return jsonDecode(res.body);
+  }
+
   Future<List<Product>> getProducts() async {
-    Response res = await get(url);
+    Response res = await get("$url/products");
 
     if (res.statusCode == 200) {
       List<dynamic> body = jsonDecode(res.body);
@@ -20,13 +36,13 @@ class HttpService {
   }
 
   Future<Response> deleteProduct(id) async {
-    Future<Response> res = delete("$url/$id");
+    Future<Response> res = delete("$url/products/$id");
     return res;
   }
 
   Future<Response> insertProduct(String nev, String ar, String keszleten) {
     return post(
-      "http://www.trophien.com:8080/products",
+      "$url/products",
       headers: <String, String> {
         "Content-Type": "application/json; charset=UTF-8",
       },
@@ -52,7 +68,7 @@ class HttpService {
   Future<Response> updateProduct(String id, String nev, String ar, String keszleten) {
     print("lefut");
     return put(
-      "http://www.trophien.com:8080/products/$id",
+      "$url/products/$id",
       headers: <String, String> {
         "Content-Type": "application/json; charset=UTF-8",
       },
