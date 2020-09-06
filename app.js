@@ -28,5 +28,5 @@ app.use((req, res) => {
 })
 
 app.listen(parameter.app.port, () => {
-    console.log("Server is running...")
+    console.log(`Server is running on port ${parameter.app.port}...`)
 })
