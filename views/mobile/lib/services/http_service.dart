@@ -1,23 +1,23 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:mobile/services/product.dart';
 
 
 class HttpService {
-  final String url = "http://www.trophien.com:8080";
+  final String url = "http://10.0.0.2:8080";
   
-  Future<String> login(usernameEmail, password) async {
+  Future<Map<String, dynamic>> login(usernameEmail, password) async {
     Response res = await post(
       "$url/login",
       headers: <String, String> {
-        "Content-Type": "application/json; charset=UTF-8"
+        'Content-Type': 'application/json; charset=UTF-8'
       },
       body: jsonEncode(<String, String> {
         "usernameEmail": usernameEmail,
         "password": password
       })
     );
+    
     return jsonDecode(res.body);
   }
 

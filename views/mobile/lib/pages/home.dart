@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import "package:mobile/services/http_service.dart";
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   @override
@@ -96,12 +99,37 @@ class _HomeState extends State<Home> {
                             fontSize: 16,
                           ),
                         ),
-                        onPressed: () {
-                          setState(() {
+                        onPressed: () async {
+                          /*setState(() {
                             _formKey.currentState.save();
-                            String res = httpService.login(_usernameEmail, _password).toString().toString();
-                            debugPrint(res);
-                          });
+                            httpService.login(_usernameEmail, _password);
+                            
+                          });*/
+                          _formKey.currentState.save();
+                          var url = 'http://192.168.0.3:8080/login';
+                          var response = await http.post(url, 
+                            body: {'usernameEmail': _usernameEmail, 'password': _password});
+                          /*print('Response status: ${response.statusCode}');*/
+                          print('Response body: ${response.body}');
+                          if (response.body.contains("error")) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => CupertinoAlertDialog(
+                                title: Text('Error'),
+                                content: Text(jsonDecode(response.body)["error"].toString()),
+                                actions: [
+                                  CupertinoButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              )
+                            );
+                          } else {
+                            Navigator.popAndPushNamed(context, "/get");
+                          }
                         },
                       )
                     ],
