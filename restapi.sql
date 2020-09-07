@@ -3,19 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2020. Aug 11. 08:50
+-- Létrehozás ideje: 2020. Sze 07. 19:58
 -- Kiszolgáló verziója: 10.4.11-MariaDB
 -- PHP verzió: 7.4.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Adatbázis: `restapi`
@@ -47,6 +41,13 @@ CREATE TABLE `favorite` (
   `user_id` varchar(200) COLLATE utf8_hungarian_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
+--
+-- A tábla adatainak kiíratása `favorite`
+--
+
+INSERT INTO `favorite` (`id`, `product_id`, `user_id`) VALUES
+('1', '079cc1bfdc1682531822', '9053b0d0e4d990d7eccc');
+
 -- --------------------------------------------------------
 
 --
@@ -62,31 +63,31 @@ CREATE TABLE `forgot_password` (
 -- --------------------------------------------------------
 
 --
--- Tábla szerkezet ehhez a táblához `raktar`
+-- Tábla szerkezet ehhez a táblához `product`
 --
 
-CREATE TABLE `raktar` (
-  `id` int(11) NOT NULL,
-  `nev` varchar(150) COLLATE utf8_hungarian_ci NOT NULL,
-  `ar` int(11) NOT NULL,
-  `keszleten` tinyint(4) NOT NULL
+CREATE TABLE `product` (
+  `id` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
+  `name` varchar(150) COLLATE utf8_hungarian_ci NOT NULL,
+  `price` int(11) NOT NULL,
+  `availability` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
--- A tábla adatainak kiíratása `raktar`
+-- A tábla adatainak kiíratása `product`
 --
 
-INSERT INTO `raktar` (`id`, `nev`, `ar`, `keszleten`) VALUES
-(101, 'Étkezőasztal', 30000, 0),
-(102, 'Ágy', 80000, 1),
-(103, 'Polc', 10000, 1),
-(104, 'Szekrény', 21000, 1),
-(105, 'Dolgozóasztal', 20000, 0),
-(106, 'Számítógép', 250000, 0),
-(107, 'Laptop', 300000, 1),
-(108, 'Szék', 7000, 1),
-(109, 'Fiókos szekrény', 15000, 0),
-(110, 'Fali állvány', 6500, 0);
+INSERT INTO `product` (`id`, `name`, `price`, `availability`) VALUES
+('079cc1bfdc1682531822', 'Dolgozóasztal', 20000, 0),
+('2c47c34bc01deb63be5d', 'Étkezőasztal', 30000, 0),
+('2e20fb234a104066983c', 'Ágy', 80000, 1),
+('64a419cb63a72e97e112', 'Számítógép', 250000, 1),
+('928c3cd0bf2f3fca361e', 'Szék', 7000, 1),
+('97ea5799309afd7d6e11', 'Polc', 10000, 0),
+('a9e18a7ab8a62012509e', 'Fiókos szekrény', 15000, 1),
+('c758ed08eeb16b3d28c3', 'Szekrény', 21000, 1),
+('d10f987a5fd6941c7f6c', 'Fali állvány', 6500, 0),
+('de214d4b3355a9b9372d', 'Laptop', 300000, 1);
 
 -- --------------------------------------------------------
 
@@ -107,7 +108,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `email`, `password`, `email_verified`) VALUES
-('9053b0d0e4d990d7eccc', 'leventenyiro', 'nyiro.levente@gmail.com', '$2b$10$mS8pV0Tx7BfzmgsvFUzan.TQ7L1oz6p.UKw8qLa1Y2Gfk0m0xaG5a', 1);
+('9053b0d0e4d990d7eccc', 'leventenyiro', 'nyiro.levente@gmail.com', '$2b$10$HRvnr51EVgNHrgYckFPtGe8Et4mJKFzdOyX9DaTC0afYIRJJa4uSa', 1);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -134,11 +135,11 @@ ALTER TABLE `forgot_password`
   ADD PRIMARY KEY (`id`);
 
 --
--- A tábla indexei `raktar`
+-- A tábla indexei `product`
 --
-ALTER TABLE `raktar`
+ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `nev_idx` (`nev`);
+  ADD KEY `nev_idx` (`name`);
 
 --
 -- A tábla indexei `user`
@@ -147,16 +148,6 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uc_username` (`username`),
   ADD UNIQUE KEY `uc_email` (`email`);
-
---
--- A kiírt táblák AUTO_INCREMENT értéke
---
-
---
--- AUTO_INCREMENT a táblához `raktar`
---
-ALTER TABLE `raktar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 DELIMITER $$
 --
@@ -168,7 +159,3 @@ CREATE DEFINER=`root`@`localhost` EVENT `delete_forgot_password` ON SCHEDULE EVE
 
 DELIMITER ;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
