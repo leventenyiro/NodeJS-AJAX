@@ -5,7 +5,7 @@ import 'package:mobile/pages/insert.dart';
 import 'package:mobile/pages/update.dart';
 
 void main() => runApp(MaterialApp(
-  initialRoute: "/",
+  initialRoute: "/get",
   routes: {
     "/": (context) => Home(),
     "/get": (context) => Get(),

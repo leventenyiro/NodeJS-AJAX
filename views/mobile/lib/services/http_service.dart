@@ -4,7 +4,7 @@ import 'package:mobile/services/product.dart';
 
 
 class HttpService {
-  final String url = "http://10.0.0.2:8080";
+  final String url = "http://192.168.0.4:8080";
   
   Future<Map<String, dynamic>> login(usernameEmail, password) async {
     Response res = await post(
