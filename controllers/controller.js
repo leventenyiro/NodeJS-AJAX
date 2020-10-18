@@ -106,14 +106,18 @@ exports.login = (req, res) => {
 }
 
 exports.getUser = (req, res) => {
-    var db = new Database()
-    db.getUser(req, (result) => {
-        if (result == undefined)
-            res.json({ error: "You aren't logged in" })
-        else
-            res.json(result)
-        db.end()
-    })
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.getUser(req, (result) => {
+            if (result == undefined)
+                res.json({ error: "You aren't logged in" })
+            else
+                res.json(result)
+            db.end()
+        })
+    }
 }
 
 exports.logout = (req, res) => {
@@ -177,69 +181,99 @@ exports.forgotPassword = (req, res) => {
 }
 
 exports.getAll = (req, res) => {
-    var db = new Database()
-    db.getAll(req, (result) => {
-        res.send(result)
-        db.end()
-    })
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.getAll(req, (result) => {
+            res.send(result)
+            db.end()
+        })
+    }
 }
 
 exports.post = (req, res) => {
-    var db = new Database()
-    db.post(req, () => {
-        db.getAll(req, (result) => {
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.post(req, (result) => {
             res.send(result)
             db.end()
         })
-    })
+    }
 }
 
 exports.getOne = (req, res) => {
-    var db = new Database()
-    db.getOne(req, (result) => {
-        res.send(result)
-        db.end()
-    })
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.getOne(req, (result) => {
+            res.send(result)
+            db.end()
+        })
+    }
 }
 
 exports.put = (req, res) => {
-    var db = new Database()
-    db.put(req, () => {
-        db.getAll(req, (result) => {
-            res.send(result)
-            db.end()
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.put(req, () => {
+            db.getAll(req, (result) => {
+                res.send(result)
+                db.end()
+            })
         })
-    })
+    }
 }
 
 exports.delete = (req, res) => {
-    var db = new Database()
-    db.delete(req, () => {
-        db.getAll(req, (result) => {
-            res.send(result)
-            db.end()
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.delete(req, () => {
+            db.getAll(req, (result) => {
+                res.send(result)
+                db.end()
+            })
         })
-    })
+    }
 }
 
 exports.addFavorite = (req, res) => {
-    var db = new Database()
-    db.addFavorite(req)
-    res.end()
-    db.end()
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.addFavorite(req)
+        res.end()
+        db.end()
+    }
 }
 
 exports.getFavorite = (req, res) => {
-    var db = new Database()
-    db.getFavorite(req, (result) => {
-        res.json(result)
-        db.end()
-    })
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.getFavorite(req, (result) => {
+            res.json(result)
+            db.end()
+        })
+    }
 }
 
 exports.removeFavorite = (req, res) => {
-    var db = new Database()
-    db.removeFavorite(req)
-    res.end()
-    db.end()
+    if (req.session.userId == null)
+        res.json({ error: "" })
+    else {
+        var db = new Database()
+        db.removeFavorite(req)
+        res.end()
+        db.end()
+    }
 }

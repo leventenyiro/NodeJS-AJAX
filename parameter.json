@@ -10,7 +10,7 @@
     },
     "mailsend": {
         "user": "trophien.noreply@gmail.com",
-        "password": "***",
+        "password": "",
         "url": "http://localhost/nodejs/"
     }
 }

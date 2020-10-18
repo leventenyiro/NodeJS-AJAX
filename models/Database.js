@@ -149,8 +149,9 @@ class Database {
         this.generateNewHashedId(`product`)
         var sql = `INSERT INTO product (id, name, price, availability) VALUES ("${this.hashedId}", "${req.body.name}",${req.body.price}, ${req.body.availability})`
         this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            return callback(result)
+            if (err)
+                return callback({ error: "Ez már benne van az adatbázisban!" })
+            return callback({ success: "Sikeres rögzítés!" })
         })
     }
 
@@ -165,16 +166,18 @@ class Database {
     put(req, callback) {
         var sql = `UPDATE product SET name = "${req.body.name}", price = ${req.body.price}, availability = ${req.body.availability} WHERE id = "${req.params.id}"`
         this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            return callback(result)
+            if (err)
+                return callback({ error: "Ez már benne van az adatbázisban!" })
+            return callback({ success: "Sikeres rögzítés!" })
         })
     }
 
     delete(req, callback) {
         var sql = `DELETE FROM product WHERE id = "${req.params.id}"`
         this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            return callback(result)
+            if (err)
+                return callback({ error: "Sikertelen törlés!" })
+            return callback({ success: "Sikeres törlés!" })
         })
     }
 
