@@ -122,9 +122,12 @@ exports.getUser = (req, res) => {
 
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
-        if (err) throw err
-        res.clearCookie("session")
-        res.end()
+        if (err)
+            res.json({ error: "Sikertelen kijelentkezés!" })
+        else {
+            res.clearCookie("session")
+            res.json({ success: "Sikeres kijelentkezés!" })
+        }
     })
 }
 
