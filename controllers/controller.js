@@ -184,15 +184,15 @@ exports.forgotPassword = (req, res) => {
 }
 
 exports.getAll = (req, res) => {
-    if (req.session.userId == null)
+    /*if (req.session.userId == null)
         res.json({ error: "" })
-    else {
+    else {*/
         var db = new Database()
         db.getAll(req, (result) => {
             res.send(result)
             db.end()
         })
-    }
+    //}
 }
 
 exports.post = (req, res) => {
@@ -208,15 +208,15 @@ exports.post = (req, res) => {
 }
 
 exports.getOne = (req, res) => {
-    if (req.session.userId == null)
+    /*if (req.session.userId == null)
         res.json({ error: "" })
-    else {
+    else {*/
         var db = new Database()
         db.getOne(req, (result) => {
             res.send(result)
             db.end()
         })
-    }
+    //}
 }
 
 exports.put = (req, res) => {
