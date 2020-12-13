@@ -4,6 +4,7 @@ this.data = []
 async function login() {
     var usernameEmail = document.getElementById("inputUsernameEmail").value
     var password = document.getElementById("inputPassword").value
+    const lang = navigator.language.split("-")[0]
 
     var response = await fetch(`${this.url}login`, {
         method: "POST",
@@ -11,7 +12,7 @@ async function login() {
             'Content-Type': 'application/json'
         },
         credentials: "include",
-        body: JSON.stringify({ usernameEmail: usernameEmail, password: password })
+        body: JSON.stringify({ usernameEmail: usernameEmail, password: password, lang: lang })
     }).then(response => response.json())
     if ("error" in response) {
         this.response(response)

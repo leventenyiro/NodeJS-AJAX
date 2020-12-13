@@ -16,6 +16,7 @@ ToDo's:
 2020.12.13
  - [] Delete on registation error
  - [] Favorite
+ - [] Error and success language variability
 
 ## /registration (POST)
     - input:

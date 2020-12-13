@@ -1,5 +1,8 @@
 {
     "en": {
+        "error": "Error",
+        "success": "Success",
+
         "serverErr": "Server error!",
         "sthMissing": "Something is missing!",
         "usernameMinLength": "Username must be at least 6 character!",
@@ -35,6 +38,9 @@
         "successfulLogout": "Successful logout!"
     },
     "hu": {
+        "error": "Hiba",
+        "success": "Siker",
+
         "serverErr": "Szerverhiba!",
         "sthMissing": "Hiányzó adat!",
         "usernameMinLength": "Username must be at least 6 character!",
