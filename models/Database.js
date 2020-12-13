@@ -60,38 +60,6 @@ class Database {
         })
     }
 
-    /*sendEmailVerification(req, callback) {
-        var sql = `SELECT id FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}" OR username = "${req.body.username}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            /*this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
-                if (err) throw err
-                this.generateNewHashedId(`email_verification`)
-                var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
-                this.conn.query(sql, (err) => {
-                    if (err) throw err
-                    return callback(this.hashedId)
-                })
-            //})
-        })
-    }
-
-    emailVerification(req, callback) {
-        var sql = `SELECT u.id, email_verified FROM user u
-        LEFT JOIN email_verification e ON u.id = e.user_id
-        WHERE e.id = "${req.body.id}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            else if (result.length == 0) return callback({ message: "This e-mail verification is expired."})
-            else {
-                var sql = `UPDATE user SET email_verified = "1" WHERE id = "${result.id}"`
-                this.conn.query(sql)
-                this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result.id}"`)
-                return callback({ message: "Successful e-mail verification." })
-            }
-        })
-    }*/
-
     checkEmailVerification(req, callback) {
         const sql = `SELECT u.id, email_verified FROM user u
         LEFT JOIN email_verification e ON u.id = e.user_id
@@ -117,22 +85,6 @@ class Database {
             return callback(null)
         })
     }
-
-    /*sendForgotPassword(req, callback) {
-        var sql = `SELECT id FROM user WHERE email = "${req.body.email}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            this.conn.query(`DELETE FROM forgot_password WHERE user_id = "${result[0].id}"`, (err) => {
-                if (err) throw err
-                this.generateNewHashedId(`forgot_password`)
-                var sql = `INSERT INTO forgot_password (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 7 day)`
-                this.conn.query(sql, (err) => {
-                    if (err) throw err
-                    return callback(this.hashedId)
-                })
-            })
-        })
-    }*/
 
     login(req, callback) {
         const sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
@@ -175,30 +127,6 @@ class Database {
             return callback(null)
         })
     }
-
-    /*checkForgotPasswordId(req, callback) {
-        var sql = `SELECT u.id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            else
-                return callback(result)
-        })
-    }
-
-    forgotPassword(req, password, callback) {
-        var sql = `SELECT u.id AS id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            else if (result.lenght == 0) return callback("expired")
-            else {
-                var sql = `UPDATE user SET password = "${password}" WHERE id = "${result[0].id}"`
-                this.conn.query(sql, () => {
-                    this.conn.query(`DELETE FROM forgot_password WHERE id = "${req.body.id}"`)
-                    return callback("success")
-                })
-            }
-        })
-    }*/
 
     getUser(req, callback) {
         var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}"`

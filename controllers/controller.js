@@ -3,7 +3,6 @@ const Bcrypt = require("../models/Bcrypt")
 const Mailsend = require("../models/Mailsend")
 //const parameter = require("../parameter.json")
 const languages = require("../languages.json")
-const Mail = require("nodemailer/lib/mailer")
 
 function serverErr(req, res) {
     res.json({ error: languages[req.body.lang].errServer })
@@ -30,7 +29,6 @@ function checkRegistration(req) {
         req.body.password       == undefined || req.body.password       == "" ||
         req.body.passwordAgain  == undefined || req.body.passwordAgain  == "")
         //return languages[req.body.lang].sthMissing
-        //console.log(req.headers["accept-language"])
         return languages[headerLang(req.headers["accept-language"])].sthMissing
     else if (req.body.username.length < 6)
         return languages[req.body.lang].usernameMinLength
@@ -45,7 +43,7 @@ function checkRegistration(req) {
 }
 
 function checkModify(req) {
-    return undefined // fejezzük be
+    return undefined // should be done
 }
 
 function checkNewPassword(req) {
@@ -59,38 +57,6 @@ function checkNewPassword(req) {
         return languages[req.body.lang].passwordsNotEqual
 }
 
-/*exports.registration = (req, res) => {
-    var error = checkRegistration(req)
-    if (error != null)
-        res.json({ error: error })
-    else {
-        var db = new Database()
-        var bcrypt = new Bcrypt()
-        bcrypt.encrypt(req.body.password, (password) => {
-            db.checkUsername(req, (result) => {
-                if (result.length > 0) {
-                    res.json({ error: "Username already exists!" })
-                    db.end()
-                } else {
-                    db.checkEmail(req, (result) => {
-                        if (result.length > 0) {
-                            res.json({ error: "E-mail address already exists!" })
-                            db.end()
-                        } else {
-                            db.registration(req, password)
-                            db.sendEmailVerification(req, (result) => {
-                                new Mailsend(req).verification(result);
-                                res.statusCode = 200;
-                                res.json({ success: "Successful registration, please activate your e-mail address!" })
-                                db.end()
-                            })
-                        }
-                    })
-                }
-            })
-        })
-    }
-}*/
 exports.registration = (req, res) => {
     const error = checkRegistration(req)
     if (error != null)
@@ -147,6 +113,55 @@ exports.verification = (req, res) => {
                             res.json({ success: languages[req.body.lang].successfulEmailVerification })
                     })
                 }
+            })
+        }
+    })
+}
+
+exports.sendForgotPassword = (req, res) => {
+    if (req.body.email == undefined || req.body.email == "")
+        res.json({ error: languages[req.body.lang].addEmailAddress })
+    else {
+        const db = new Database()
+        db.checkEmail(req, (err, result) => {
+            if (err) serverErr(req, res)
+            else if (result.length == 0)
+                res.json({ error: languages[req.body.lang].noUserWithThisEmail })
+            else {
+                db.deleteForgotPassword(result[0].id, (err) => {
+                    if (err) serverErr(req, res)
+                    else {
+                        db.insertForgotPassword(result[0].id, (err, result) => {
+                            console.log(result.id)
+                            if (err) serverErr(req, res)
+                            else {
+                                new Mailsend().forgotPassword(req, result.id)
+                                res.json({ success: languages[req.body.lang].emailSent })
+                            }
+                        })
+                    }
+                })
+            }
+        })
+    }
+}
+
+exports.forgotPassword = (req, res) => {
+    const db = new Database()
+    db.checkForgotPassword(req, (err, result) => {
+        if (err) serverErr(req, res)
+        if (result.length == 0)
+            res.json({ error: languages[req.body.lang].invalidToken })
+        else if (checkNewPassword(req) != null)
+            res.json({ error: checkNewPassword(req) })
+        else {
+            db.modifyPassword(result[0].id, req.body.password, (err) => {
+                if (err) serverErr(req, res)
+                db.deleteForgotPassword(result[0].id, (err) => {
+                    if (err) serverErr(req, res)
+                    else
+                        res.json({ success: languages[req.body.lang].successfulPasswordModify })
+                })
             })
         }
     })
@@ -210,98 +225,6 @@ exports.logout = (req, res) => {
         }
     })
 }
-// 2020.12.13 - Ezt kell módosítani
-/*exports.sendForgotPassword = (req, res) => {
-    if (req.body.email == "")
-        res.json({ error: "Please add your e-mail address!" })
-    var db = new Database()
-    db.checkEmail(req, (result) => {
-        if (result.length == 0) {
-            res.json({ error: "There aren't user with this e-mail!" })
-            db.end()
-        } else {
-            db.sendForgotPassword(req, (result) => {
-                new Mailsend(req).forgotPassword(result);
-                res.statusCode = 200
-                res.send({ success: "E-mail has sent!" })
-                db.end()
-            })
-        }
-    })
-}*/
-exports.sendForgotPassword = (req, res) => {
-    if (req.body.email == undefined || req.body.email == "")
-        res.json({ error: languages[req.body.lang].addEmailAddress })
-    else {
-        const db = new Database()
-        db.checkEmail(req, (err, result) => {
-            if (err) serverErr(req, res)
-            else if (result.length == 0)
-                res.json({ error: languages[req.body.lang].noUserWithThisEmail })
-            else {
-                db.deleteForgotPassword(result[0].id, (err) => {
-                    if (err) serverErr(req, res)
-                    else {
-                        db.insertForgotPassword(result[0].id, (err, result) => {
-                            console.log(result.id)
-                            if (err) serverErr(req, res)
-                            else {
-                                new Mailsend().forgotPassword(req, result.id)
-                                res.json({ success: languages[req.body.lang].emailSent })
-                            }
-                        })
-                    }
-                })
-            }
-        })
-    }
-}
-
-exports.forgotPassword = (req, res) => {
-    const db = new Database()
-    db.checkForgotPassword(req, (err, result) => {
-        if (err) serverErr(req, res)
-        if (result.length == 0)
-            res.json({ error: languages[req.body.lang].invalidToken })
-        else if (checkNewPassword(req) != null)
-            res.json({ error: checkNewPassword(req) })
-        else {
-            db.modifyPassword(result[0].id, req.body.password, (err) => {
-                if (err) serverErr(req, res)
-                db.deleteForgotPassword(result[0].id, (err) => {
-                    if (err) serverErr(req, res)
-                    else
-                        res.json({ success: languages[req.body.lang].successfulPasswordModify })
-                })
-            })
-        }
-    })
-}
-
-/*exports.forgotPassword = (req, res) => {
-    var db = new Database()
-    db.checkNewPassword(req, (result) => {
-        if (result.length == 0) {
-            res.json({ error: "This isn't a valid token!" })
-        } else {
-            var error = checkForgotPassword(req)
-            if (error != null)
-                res.json({ error: error })
-            else {
-                var db = new Database()
-                var bcrypt = new Bcrypt()
-                bcrypt.encrypt(req.body.password, (password) => {
-                    db.forgotPassword(req, password, () => {
-                        //res.statusCode = 200
-                        res.json({ success: "Successful password change!" })
-                        db.end()
-                    })
-                })
-            }
-        }
-    })
-    
-}*/
 
 exports.getAll = (req, res) => {
     /*if (req.session.userId == null)

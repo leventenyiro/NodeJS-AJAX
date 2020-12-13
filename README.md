@@ -15,3 +15,76 @@ ToDo's:
 
 2020.12.13
  - [] Delete on registation error
+ - [] Favorite
+
+## /registration (POST)
+    - input:
+        - username (string)
+        - email (string)
+        - password (string)
+        - passwordAgain (string)
+    - output:
+        - error OR success
+
+## /forgotpassword (POST)
+    - input:
+        - email
+    - output:
+        - error OR success
+
+## /login (POST)
+    - input:
+        - usernameEmail (string)
+        - password (string)
+    - output:
+        - error OR success
+
+## /login (GET)
+    - input (reachable with cookie)
+    - output:
+        - error OR success
+
+## /logout (POST)
+    - input (reachable with cookie)
+    - output:
+        - error OR success
+
+## /product (GET)
+    - output:
+        - error OR success
+
+## /product (POST)
+    - input:
+        - name (string)
+        - price (int)
+        - availability (0 - NO, 1 - YES)
+    - output:
+        - error OR success
+
+## /product/:id (GET)
+    - output:
+        - error OR success
+
+## /product/:id (PUT)
+    - input:
+        - name (string)
+        - price (int)
+        - availability (0 - NO, 1 - YES)
+    - output:
+        - error OR success
+
+## /product/:id (DELETE)
+    - output:
+        - error OR success
+
+## /favorite/:id (POST)
+    - output:
+        - error OR success
+
+## /favorite (GET)
+    - output:
+        - error OR success
+
+## /favorite/:id (DELETE)
+    - output:
+        - error OR success
