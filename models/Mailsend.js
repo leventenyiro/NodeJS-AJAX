@@ -1,6 +1,6 @@
-var parameter = require("../parameter.json")
+const parameter = require("../parameter.json")
 class Mailsend {
-    constructor(req) {
+    constructor() {
         var nodemailer = require("nodemailer")
         this.transporter = nodemailer.createTransport({
             service: "gmail",
@@ -9,12 +9,11 @@ class Mailsend {
                 pass: parameter.mailsend.password
             }
         })
-        this.req = req;
     }
 
-    verification(emailVerificationId) {
-        var email = this.req.body.email
-        if (email == undefined) email = this.req.body.usernameEmail
+    verification(req, emailVerificationId) {
+        let email = req.body.email
+        if (email == undefined) email = req.body.usernameEmail
         this.mailOptions = {
             from: parameter.mailsend.user,
             to: email,
@@ -27,10 +26,10 @@ class Mailsend {
         this.send()
     }
     
-    forgotPassword(forgotPasswordId) {
+    forgotPassword(req, forgotPasswordId) {
         this.mailOptions = {
             from: parameter.mailsend.user,
-            to: this.req.body.email,
+            to: req.body.email,
             subject: "Forgot password - make new",
             html: `
                 <h1>Forgot password - make new</h1>

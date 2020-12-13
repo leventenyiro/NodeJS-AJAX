@@ -11,31 +11,6 @@ class Database {
         this.hashedId = ""
     }
 
-    checkUsername(req, callback) {
-        this.conn.query(`SELECT * FROM user WHERE username = "${req.body.username}"`, (err, result) => {
-            if (err) throw err
-            return callback(result)
-        })
-    }
-
-    checkEmail(req, callback) {
-        this.conn.query(`SELECT * FROM user WHERE email = "${req.body.email}"`, (err, result) => {
-            if (err) throw err
-            return callback(result)
-        })
-    }
-    
-    registration(req, password) {
-        this.generateNewHashedId(`user`)
-        var sql = `INSERT INTO user (id, username, email, password, email_verified) VALUES (
-            "${this.hashedId}",
-            "${req.body.username}",
-            "${req.body.email}",
-            "${password}",
-            "0")`
-        this.conn.query(sql)
-    }
-
     generateNewHashedId(table) {
         this.hashedId = require("crypto").randomBytes(10).toString("hex")
         var sql = `SELECT COUNT(*) AS count FROM ${table} WHERE id = "${this.hashedId}"`
@@ -45,12 +20,52 @@ class Database {
         })
     }
 
-    sendEmailVerification(req, callback) {
+    checkUsername(req, callback) {
+        this.conn.query(`SELECT * FROM user WHERE username = "${req.body.username}"`, (err, result) => {
+            if (err)
+                return callback(err, null)
+            return callback(null, result)
+        })
+    }
+
+    checkEmail(req, callback) {
+        this.conn.query(`SELECT * FROM user WHERE email = "${req.body.email}"`, (err, result) => {
+            if (err)
+                return callback(err, null)
+            return callback(null, result)
+        })
+    }
+    
+    registration(req, password, callback) {
+        this.generateNewHashedId(`user`)
+        var sql = `INSERT INTO user (id, username, email, password, email_verified) VALUES (
+            "${this.hashedId}",
+            "${req.body.username}",
+            "${req.body.email}",
+            "${password}",
+            "0")`
+        this.conn.query(sql, (err) => {
+            if (err)
+                return callback(err, null)
+            return callback(null, { id: this.hashedId })
+        })
+    }
+
+    sendEmailVerification(id, callback) {
+        this.generateNewHashedId(`email_verification`)
+        const sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${id}", NOW() + INTERVAL 30 day)`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err, null)
+            return callback(null, { id: this.hashedId })
+        })
+    }
+
+    /*sendEmailVerification(req, callback) {
         var sql = `SELECT id FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}" OR username = "${req.body.username}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             /*this.conn.query(`DELETE FROM email_verification WHERE user_id = "${result[0].id}"`, (err) => {
-                if (err) throw err*/
+                if (err) throw err
                 this.generateNewHashedId(`email_verification`)
                 var sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${result[0].id}", NOW() + INTERVAL 30 day)`
                 this.conn.query(sql, (err) => {
@@ -75,9 +90,35 @@ class Database {
                 return callback({ message: "Successful e-mail verification." })
             }
         })
+    }*/
+
+    checkEmailVerification(req, callback) {
+        const sql = `SELECT u.id, email_verified FROM user u
+        LEFT JOIN email_verification e ON u.id = e.user_id
+        WHERE e.id = "${req.body.id}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) return callback(err, null)
+            return callback(null, result)
+        })
     }
 
-    sendForgotPassword(req, callback) {
+    emailVerification(userId, callback) {
+        const sql = `UPDATE user SET email_verified = "1" WHERE id = "${userId}"`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err)
+            return callback(null)
+        })
+    }
+
+    deleteEmailVerification(userId, callback) {
+        const sql = `DELETE FROM email_verification WHERE id = "${userId}"`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err)
+            return callback(null)
+        })
+    }
+
+    /*sendForgotPassword(req, callback) {
         var sql = `SELECT id FROM user WHERE email = "${req.body.email}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
@@ -91,9 +132,51 @@ class Database {
                 })
             })
         })
+    }*/
+
+    login(req, callback) {
+        const sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
+        this.conn.query(sql, (err, result) => {
+            if (err)
+                return callback(err, null)
+            return callback(null, result)
+        })
     }
 
-    checkForgotPasswordId(req, callback) {
+    deleteForgotPassword(userId, callback) {
+        const sql = `DELETE FROM forgot_password WHERE user_id = "${userId}"`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err)
+            return callback(null)
+        })
+    }
+
+    insertForgotPassword(userId, callback) {
+        this.generateNewHashedId(`forgot_password`)
+        const sql = `INSERT INTO forgot_password (id, user_id, expiration) VALUES ("${this.hashedId}", "${userId}", NOW() + INTERVAL 7 day)`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err, null)
+            return callback(null, { id: this.hashedId })
+        })
+    }
+
+    checkForgotPassword(req, callback) {
+        const sql = `SELECT u.id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
+        this.conn.query(sql, (err, result) => {
+            if (err) return callback(err, null)
+            return callback(null, result)
+        })
+    }
+
+    modifyPassword(userId, password, callback) {
+        const sql = `UPDATE user SET password = "${password}" WHERE id = "${userId}"`
+        this.conn.query(sql, (err) => {
+            if (err) return callback(err)
+            return callback(null)
+        })
+    }
+
+    /*checkForgotPasswordId(req, callback) {
         var sql = `SELECT u.id FROM user u LEFT JOIN forgot_password f ON u.id = f.user_id WHERE f.id = "${req.body.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
@@ -115,15 +198,7 @@ class Database {
                 })
             }
         })
-    }
-
-    login(req, callback) {
-        var sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
-        this.conn.query(sql, (err, result) => {
-            if (err) throw err
-            return callback(result)
-        })
-    }
+    }*/
 
     getUser(req, callback) {
         var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}"`

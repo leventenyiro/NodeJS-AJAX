@@ -1,0 +1,41 @@
+{
+    "en": {
+        "serverErr": "Server error!",
+        "sthMissing": "Something is missing!",
+        "usernameMinLength": "Username must be at least 6 character!",
+        "emailInvalid": "This e-mail address is not valid!",
+        "passwordMinLength": "Password must be at least 8 character!",
+        "passwordFormat": "Password must contains at least 1 upper-character and 1 number!",
+        "passwordsNotEqual": "Passwords aren't equal!",
+        "usernameExists": "Username already exists!",
+        "emailExists": "E-mail address already exists!",
+        "successfulRegistration": "Successful registration, please activate your e-mail address!",
+        
+        "emailVerificationExpired": "This e-mail verification is expired!",
+        "successfulEmailVerification": "Successful e-mail verification!",
+
+        "unsuccessfulLogin": "Unsuccessful login!",
+        "activateEmail": "You have to activate your e-mail address!",
+        "successfulLogin": "Successful login!",
+
+        "addEmailAddress": "Please add your e-mail address!",
+        "noUserWithThisEmail": "There aren't user with this e-mail!",
+        "emailSent": "E-mail has sent!",
+        
+        "invalidToken": "This is an invalid token!",
+
+        "successfulPasswordModify": "Successful password modify!",
+        "invalidOldPassword": "Old password is not valid!",
+
+        "notLoggedIn": "You aren't logged in",
+
+        "successfulProfileModify": "Successful profile modify!",
+
+        "unsuccessfulLogout": "Unsuccessful logout!",
+        "successfulLogout": "Successful logout!"
+    },
+    "hu": {
+        "serverErr": "Szerverhiba!",
+        "sthMissing": "Valami nincs kitöltve!"
+    }
+}

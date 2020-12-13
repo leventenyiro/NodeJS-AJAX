@@ -12,3 +12,6 @@ ToDo's:
  - [x] Forgot password
  - [x] Password regex
  - [x] Check e-mail address, when forgot password
+
+2020.12.13
+ - [] Delete on registation error
