@@ -5,11 +5,11 @@ const Mailsend = require("../models/Mailsend")
 const languages = require("../languages.json")
 
 function serverErr(req, res) {
-    res.json({ error: languages[req.body.lang].errServer })
+    res.json({ error: languages[headerLang(req.headers["accept-language"])].errServer })
 }
 
 function headerLang(lang) {
-    if (!lang in languages)
+    if (!lang.split("-")[0] in languages)
         lang = "en"
     return lang
 }
@@ -28,18 +28,18 @@ function checkRegistration(req) {
         req.body.email          == undefined || req.body.email          == "" ||
         req.body.password       == undefined || req.body.password       == "" ||
         req.body.passwordAgain  == undefined || req.body.passwordAgain  == "")
-        //return languages[req.body.lang].sthMissing
+        //return languages[headerLang(req.headers["accept-language"])].sthMissing
         return languages[headerLang(req.headers["accept-language"])].sthMissing
     else if (req.body.username.length < 6)
-        return languages[req.body.lang].usernameMinLength
+        return languages[headerLang(req.headers["accept-language"])].usernameMinLength
     else if (!checkEmail(req.body.email))
-        return languages[req.body.lang].emailInvalid
+        return languages[headerLang(req.headers["accept-language"])].emailInvalid
     else if (req.body.password.length < 8)
-        return languages[req.body.lang].passwordMinLength
+        return languages[headerLang(req.headers["accept-language"])].passwordMinLength
     else if (!checkPassword(req.body.password))
-        return languages[req.body.lang].passwordFormat
+        return languages[headerLang(req.headers["accept-language"])].passwordFormat
     else if (req.body.password != req.body.passwordAgain)
-        return languages[req.body.lang].passwordsNotEqual
+        return languages[headerLang(req.headers["accept-language"])].passwordsNotEqual
 }
 
 function checkModify(req) {
@@ -48,13 +48,13 @@ function checkModify(req) {
 
 function checkNewPassword(req) {
     if (req.body.password == "" || req.body.passwordAgain == "")
-        return languages[req.body.lang].sthMissing
+        return languages[headerLang(req.headers["accept-language"])].sthMissing
     else if (req.body.password.length < 8)
-        return languages[req.body.lang].passwordMinLength
+        return languages[headerLang(req.headers["accept-language"])].passwordMinLength
     else if (!checkPassword(req.body.password))
-        return languages[req.body.lang].passwordFormat
+        return languages[headerLang(req.headers["accept-language"])].passwordFormat
     else if (req.body.password != req.body.passwordAgain)
-        return languages[req.body.lang].passwordsNotEqual
+        return languages[headerLang(req.headers["accept-language"])].passwordsNotEqual
 }
 
 exports.registration = (req, res) => {
@@ -69,12 +69,12 @@ exports.registration = (req, res) => {
             db.checkUsername(req, (err, result) => {
                 if (err) serverErr(req, res)
                 else if (result.length > 0)
-                    res.json({ error: languages[req.body.lang].usernameExists })
+                    res.json({ error: languages[headerLang(req.headers["accept-language"])].usernameExists })
                 else {
                     db.checkEmail(req, (err, result) => {
                         if (err) serverErr(req, res)
                         else if (result.length > 0)
-                            res.json({ error: languages[req.body.lang].emailExists })
+                            res.json({ error: languages[headerLang(req.headers["accept-language"])].emailExists })
                         else {
                             db.registration(req, password, (err, result) => {
                                 if (err) serverErr(req, res)
@@ -84,7 +84,7 @@ exports.registration = (req, res) => {
                                         else {
                                             new Mailsend().verification(req, result.id)
                                             // hibakezelés?? HA VALAMI NEM SIKERÜL VONJA VISSZA - delete
-                                            res.json({ success: languages[req.body.lang].successfulRegistration })
+                                            res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulRegistration })
                                         }
                                     })
                                 }
@@ -102,7 +102,7 @@ exports.verification = (req, res) => {
     db.checkEmailVerification(req, (err, result) => {
         if (err) serverErr(req, res)
         else if (result.length == 0)
-            res.json({ success: languages[req.body.lang].emailVerificationExpired })
+            res.json({ success: languages[headerLang(req.headers["accept-language"])].emailVerificationExpired })
         else {
             db.emailVerification(result[0].id, (err) => {
                 if (err) serverErr(req, res)
@@ -110,7 +110,7 @@ exports.verification = (req, res) => {
                     db.deleteEmailVerification(result[0].id, (err) => {
                         if (err) serverErr(req, res)
                         else
-                            res.json({ success: languages[req.body.lang].successfulEmailVerification })
+                            res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulEmailVerification })
                     })
                 }
             })
@@ -120,13 +120,13 @@ exports.verification = (req, res) => {
 
 exports.sendForgotPassword = (req, res) => {
     if (req.body.email == undefined || req.body.email == "")
-        res.json({ error: languages[req.body.lang].addEmailAddress })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].addEmailAddress })
     else {
         const db = new Database()
         db.checkEmail(req, (err, result) => {
             if (err) serverErr(req, res)
             else if (result.length == 0)
-                res.json({ error: languages[req.body.lang].noUserWithThisEmail })
+                res.json({ error: languages[headerLang(req.headers["accept-language"])].noUserWithThisEmail })
             else {
                 db.deleteForgotPassword(result[0].id, (err) => {
                     if (err) serverErr(req, res)
@@ -136,7 +136,7 @@ exports.sendForgotPassword = (req, res) => {
                             if (err) serverErr(req, res)
                             else {
                                 new Mailsend().forgotPassword(req, result.id)
-                                res.json({ success: languages[req.body.lang].emailSent })
+                                res.json({ success: languages[headerLang(req.headers["accept-language"])].emailSent })
                             }
                         })
                     }
@@ -151,7 +151,7 @@ exports.forgotPassword = (req, res) => {
     db.checkForgotPassword(req, (err, result) => {
         if (err) serverErr(req, res)
         if (result.length == 0)
-            res.json({ error: languages[req.body.lang].invalidToken })
+            res.json({ error: languages[headerLang(req.headers["accept-language"])].invalidToken })
         else if (checkNewPassword(req) != null)
             res.json({ error: checkNewPassword(req) })
         else {
@@ -160,7 +160,7 @@ exports.forgotPassword = (req, res) => {
                 db.deleteForgotPassword(result[0].id, (err) => {
                     if (err) serverErr(req, res)
                     else
-                        res.json({ success: languages[req.body.lang].successfulPasswordModify })
+                        res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulPasswordModify })
                 })
             })
         }
@@ -170,28 +170,28 @@ exports.forgotPassword = (req, res) => {
 exports.login = (req, res) => {
     if (req.body.usernameEmail == undefined || req.body.usernameEmail == "" ||
         req.body.password == undefined || req.body.password == "")
-        res.json({ error: languages[req.body.lang].sthMissing })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].sthMissing })
     else {
         const db = new Database()
         const bcrypt = new Bcrypt()
         db.login(req, (err, result) => {
             if (err) serverErr(req, res)
             else if (result.length == 0) {
-                res.json({ error: languages[req.body.lang].unsuccessfulLogin })
+                res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogin })
             } else {
                 if (result[0].email_verified == "0") {
                     db.sendEmailVerification(req, (result) => {
                         new Mailsend().verification(req, result);
-                        res.json({ error: languages[req.body.lang].activateEmail })
+                        res.json({ error: languages[headerLang(req.headers["accept-language"])].activateEmail })
                     })
                 } else {
                     bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
                         if (hash) {
                             req.session.userId = result[0].id
-                            res.json({ success: languages[req.body.lang].successfulLogin })
+                            res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulLogin })
                         } else {
                             //res.statusCode = 401
-                            res.json({ error: languages[req.body.lang].unsuccessfulLogin })
+                            res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogin })
                         }
                     })
                 }
@@ -202,12 +202,12 @@ exports.login = (req, res) => {
 
 exports.getUser = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.getUser(req, (result) => {
             if (result == undefined)
-                res.json({ error: "You aren't logged in" })
+                res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
             else
                 res.json(result)
             db.end()
@@ -218,10 +218,10 @@ exports.getUser = (req, res) => {
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err)
-            res.json({ error: "Sikertelen kijelentkezés!" })
+            res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogout })
         else {
             res.clearCookie("session")
-            res.json({ success: "Sikeres kijelentkezés!" })
+            res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulLogout })
         }
     })
 }
@@ -240,7 +240,7 @@ exports.getAll = (req, res) => {
 
 exports.post = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.post(req, (result) => {
@@ -264,7 +264,7 @@ exports.getOne = (req, res) => {
 
 exports.put = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.put(req, () => {
@@ -278,7 +278,7 @@ exports.put = (req, res) => {
 
 exports.delete = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.delete(req, () => {
@@ -292,7 +292,7 @@ exports.delete = (req, res) => {
 
 exports.addFavorite = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.addFavorite(req)
@@ -303,7 +303,7 @@ exports.addFavorite = (req, res) => {
 
 exports.getFavorite = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.getFavorite(req, (result) => {
@@ -315,7 +315,7 @@ exports.getFavorite = (req, res) => {
 
 exports.removeFavorite = (req, res) => {
     if (req.session.userId == null)
-        res.json({ error: "" })
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         var db = new Database()
         db.removeFavorite(req)
