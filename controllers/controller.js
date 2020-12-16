@@ -8,7 +8,7 @@ function serverErr(req, res) {
     res.json({ error: languages[headerLang(req.headers["accept-language"])].errServer })
 }
 
-function headerLang(lang) {
+function headerLang(lang) { // hogyha nem létezik az adott nyelven utasítás, állítsa át basicre
     if (!lang.split("-")[0] in languages)
         lang = "en"
     return lang
