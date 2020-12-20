@@ -1,6 +1,6 @@
-var express = require("express")
-var router = express.Router()
-var controller = require("./controllers/controller")
+const express = require("express")
+const router = express.Router()
+const controller = require("./controllers/controller")
 
 router.post("/registration", controller.registration)
 router.post("/verification", controller.verification)

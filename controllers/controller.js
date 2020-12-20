@@ -1,7 +1,6 @@
 const Database = require("../models/Database")
 const Bcrypt = require("../models/Bcrypt")
 const Mailsend = require("../models/Mailsend")
-//const parameter = require("../parameter.json")
 const languages = require("../languages.json")
 
 function serverErr(req, res) {
@@ -29,7 +28,6 @@ function checkRegistration(req) {
         req.body.email          == undefined || req.body.email          == "" ||
         req.body.password       == undefined || req.body.password       == "" ||
         req.body.passwordAgain  == undefined || req.body.passwordAgain  == "")
-        //return languages[headerLang(req.headers["accept-language"])].sthMissing
         return languages[headerLang(req.headers["accept-language"])].sthMissing
     else if (req.body.username.length < 6)
         return languages[headerLang(req.headers["accept-language"])].usernameMinLength
@@ -205,7 +203,7 @@ exports.getUser = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.getUser(req, (result) => {
             if (result == undefined)
                 res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
@@ -215,6 +213,17 @@ exports.getUser = (req, res) => {
         })
     }
 }
+
+// modify user
+/*exports.modifyUser = (req, res) => {
+    if (req.session.userId == null)
+        res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
+    else {
+        if ()
+        const db = new Database()
+        db.modifyUser
+    }
+}*/
 
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
@@ -231,7 +240,7 @@ exports.getAll = (req, res) => {
     /*if (req.session.userId == null)
         res.json({ error: "" })
     else {*/
-        var db = new Database()
+        const db = new Database()
         db.getAll(req, (result) => {
             res.send(result)
             db.end()
@@ -243,7 +252,7 @@ exports.post = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.post(req, (result) => {
             res.send(result)
             db.end()
@@ -255,7 +264,7 @@ exports.getOne = (req, res) => {
     /*if (req.session.userId == null)
         res.json({ error: "" })
     else {*/
-        var db = new Database()
+        const db = new Database()
         db.getOne(req, (result) => {
             res.send(result)
             db.end()
@@ -267,7 +276,7 @@ exports.put = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.put(req, () => {
             db.getAll(req, (result) => {
                 res.send(result)
@@ -281,7 +290,7 @@ exports.delete = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.delete(req, () => {
             db.getAll(req, (result) => {
                 res.send(result)
@@ -295,7 +304,7 @@ exports.addFavorite = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.addFavorite(req)
         res.end()
         db.end()
@@ -306,7 +315,7 @@ exports.getFavorite = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.getFavorite(req, (result) => {
             res.json(result)
             db.end()
@@ -318,7 +327,7 @@ exports.removeFavorite = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        var db = new Database()
+        const db = new Database()
         db.removeFavorite(req)
         res.end()
         db.end()

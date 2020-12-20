@@ -1,4 +1,5 @@
-var parameter = require("../parameter.json")
+const  parameter = require("../parameter.json")
+
 class Database {
     constructor() {
         var mysql = require("mysql")
