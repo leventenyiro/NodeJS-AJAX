@@ -9,10 +9,9 @@ function serverErr(req, res) {
 }
 
 function headerLang(acceptLanguage) { // hogyha nem létezik az adott nyelven utasítás, állítsa át basicre
-    let lang = acceptLanguage.split(";")[0].split(",")[1]
-    if (!lang.split(";")[0].split(",")[1] in languages)
-        lang = "en"
-    console.log(lang);
+    let lang = "en"
+    if (acceptLanguage != undefined && acceptLanguage.split(";")[0].split(",")[1] in languages)
+        lang = acceptLanguage.split(";")[0].split(",")[1]
     return lang
 }
 

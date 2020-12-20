@@ -38,12 +38,14 @@ class Database {
     
     registration(req, password, callback) {
         this.generateNewHashedId(`user`)
-        var sql = `INSERT INTO user (id, username, email, password, email_verified) VALUES (
+        var sql = `INSERT INTO user (id, username, email, password, email_verified, image) VALUES (
             "${this.hashedId}",
             "${req.body.username}",
             "${req.body.email}",
             "${password}",
-            "0")`
+            "0",
+            "profile.png")`
+            
         this.conn.query(sql, (err) => {
             if (err)
                 return callback(err, null)

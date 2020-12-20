@@ -1,10 +1,10 @@
-var express = require("express")
-var app = express()
-var session = require("express-session")
-var bodyParser = require("body-parser")
-var router = require("./router")
-var cors = require("cors")
-var parameter = require("./parameter.json")
+const express = require("express")
+const app = express()
+const session = require("express-session")
+const bodyParser = require("body-parser")
+const router = require("./router")
+const cors = require("cors")
+const parameter = require("./parameter.json")
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -19,13 +19,14 @@ app.use(session({
         maxAge: null
     }
 }))
+app.use(`/${parameter.fileupload.storage}`, express.static(parameter.fileupload.storage))
 
 app.use("/", router)
 
-app.use((req, res) => {
+/*app.use((req, res) => {
     res.status(404)
     res.send("<h1>404 Error!</h1>")
-})
+})*/
 
 app.listen(parameter.app.port, () => {
     console.log(`Server is running on port ${parameter.app.port}...`)
