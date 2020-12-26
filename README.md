@@ -18,6 +18,10 @@ ToDo's:
  - [] Favorite
  - [] Error and success language variability
 
+2020.12.23
+ - [] Verify goes to the mainpage
+ - [] Add responses to index.html
+
 ## /registration (POST)
     - input:
         - username (string)

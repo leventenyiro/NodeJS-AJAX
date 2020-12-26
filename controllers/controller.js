@@ -101,7 +101,7 @@ exports.verification = (req, res) => {
     db.checkEmailVerification(req, (err, result) => {
         if (err) serverErr(req, res)
         else if (result.length == 0)
-            res.json({ success: languages[headerLang(req.headers["accept-language"])].emailVerificationExpired })
+            res.json({ error: languages[headerLang(req.headers["accept-language"])].emailVerificationExpired })
         else {
             db.emailVerification(result[0].id, (err) => {
                 if (err) serverErr(req, res)
@@ -215,15 +215,17 @@ exports.getUser = (req, res) => {
 }
 
 // modify user
-/*exports.modifyUser = (req, res) => {
+exports.modifyUser = (req, res) => {
     if (req.session.userId == null)
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
-        if ()
+        if (req.file == undefined) { // ha nincs fotó, marad az alap
+            req.file.filename = "profile.png"
+        }
         const db = new Database()
         db.modifyUser
     }
-}*/
+}
 
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
@@ -242,7 +244,7 @@ exports.getAll = (req, res) => {
     else {*/
         const db = new Database()
         db.getAll(req, (result) => {
-            res.send(result)
+            res.json(result)
             db.end()
         })
     //}
@@ -254,7 +256,7 @@ exports.post = (req, res) => {
     else {
         const db = new Database()
         db.post(req, (result) => {
-            res.send(result)
+            res.json(result)
             db.end()
         })
     }
@@ -266,7 +268,7 @@ exports.getOne = (req, res) => {
     else {*/
         const db = new Database()
         db.getOne(req, (result) => {
-            res.send(result)
+            res.json(result)
             db.end()
         })
     //}
@@ -279,7 +281,7 @@ exports.put = (req, res) => {
         const db = new Database()
         db.put(req, () => {
             db.getAll(req, (result) => {
-                res.send(result)
+                res.json(result)
                 db.end()
             })
         })
@@ -293,7 +295,7 @@ exports.delete = (req, res) => {
         const db = new Database()
         db.delete(req, () => {
             db.getAll(req, (result) => {
-                res.send(result)
+                res.json(result)
                 db.end()
             })
         })

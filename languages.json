@@ -14,8 +14,8 @@
         "emailExists": "E-mail address already exists!",
         "successfulRegistration": "Successful registration, please activate your e-mail address!",
         
-        "emailVerificationExpired": "This e-mail verification is expired!",
-        "successfulEmailVerification": "Successful e-mail verification!",
+        "emailVerificationExpired": "This e-mail verification is expired, we will redirect you to the login page!",
+        "successfulEmailVerification": "Successful e-mail verification, we are loading the login page!",
 
         "unsuccessfulLogin": "Unsuccessful login!",
         "activateEmail": "You have to activate your e-mail address!",

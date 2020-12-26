@@ -46,18 +46,16 @@ async function registration() {
 
 async function emailVerification() {
     var id = new URL(window.location.href).searchParams.get("id")
-    var response = await fetch(`${this.url}verification`, {
+    var res = await fetch(`${this.url}verification`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id: id })
-    }).then(response => response.text())
-    if (response == "success")
-        document.getElementById("status").innerHTML = "<h1>Successful verification</h1>"
-    else
-        document.getElementById("status").innerHTML = "<h1>Already verificated</h1>"
-    setTimeout(function() { window.close() }, 100)
+    }).then(res => res.json())
+    //setTimeout(() => { response(res) }, 1000)
+    //setTimeout(() => { window.location = "index.html" }, 3000)
+    window.location = "index.html"
 }
 
 async function sendForgotPassword() {
@@ -154,7 +152,7 @@ async function logout() {
 
 async function getAll() {
     var search = document.getElementById("input_search").value
-    var url = `${this.url}products`
+    var url = `${this.url}product`
     if (search != "") {
         url += `?search=${search}`
     }
@@ -209,7 +207,7 @@ async function insert() {
     var availability = document.getElementById("input_keszleten").value
 
     var data = { name: name, price: price, availability: availability }
-    await fetch(`${this.url}products`, {
+    await fetch(`${this.url}product`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -222,13 +220,13 @@ async function insert() {
 }
 
 async function torles(id) {
-    await fetch(`${this.url}products/${id}`, {
+    await fetch(`${this.url}product/${id}`, {
         method: "DELETE"
     }).then(getAll())
 }
 
 async function updateForm(id) {
-    var data = await fetch(`${this.url}products/${id}`, {
+    var data = await fetch(`${this.url}product/${id}`, {
         method: "GET"
     }).then(data => data.json())
     document.getElementById("updateForm").innerHTML = ""
@@ -286,7 +284,7 @@ async function update(id) {
     var availability = document.getElementById("input_upd_keszleten").value
 
     var data = { name: name, price: price, availability: availability }
-    await fetch(`${this.url}products/${id}`, {
+    await fetch(`${this.url}product/${id}`, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
@@ -298,10 +296,10 @@ async function update(id) {
 
 async function updateKeszleten(id) {
     var availability = document.getElementById(`input_table_upd_keszleten_${id}`).value
-    var data = await fetch(`${this.url}products/${id}`, {
+    var data = await fetch(`${this.url}product/${id}`, {
         method: "GET"
     }).then(data => data.json())
-    await fetch(`${this.url}products/${id}`, {
+    await fetch(`${this.url}product/${id}`, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json'
