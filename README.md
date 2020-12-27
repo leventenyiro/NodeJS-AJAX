@@ -19,8 +19,9 @@ ToDo's:
  - [] Error and success language variability
 
 2020.12.23
- - [] Verify goes to the mainpage
+ - [x] Verify goes to the mainpage
  - [] Add responses to index.html
+ - [] You can regist if the same username and email exists, but the email_verify is 0
 
 ## /registration (POST)
     - input:

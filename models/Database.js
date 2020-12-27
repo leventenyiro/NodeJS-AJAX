@@ -22,7 +22,7 @@ class Database {
     }
 
     checkUsername(req, callback) {
-        this.conn.query(`SELECT * FROM user WHERE username = "${req.body.username}"`, (err, result) => {
+        this.conn.query(`SELECT * FROM user WHERE username = "${req.body.username}" AND email_verified = 1`, (err, result) => {
             if (err)
                 return callback(err, null)
             return callback(null, result)
@@ -30,7 +30,7 @@ class Database {
     }
 
     checkEmail(req, callback) {
-        this.conn.query(`SELECT * FROM user WHERE email = "${req.body.email}"`, (err, result) => {
+        this.conn.query(`SELECT * FROM user WHERE email = "${req.body.email}" AND email_verified = 1`, (err, result) => {
             if (err)
                 return callback(err, null)
             return callback(null, result)
@@ -132,7 +132,7 @@ class Database {
     }
 
     getUser(req, callback) {
-        var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}"`
+        var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}" OR username = "${req.body.name}" OR email = "${req.body.email}"`
         this.conn.query(sql, (err, result) => {
             if (err) throw err
             return callback(result[0])

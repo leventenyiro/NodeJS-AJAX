@@ -61,6 +61,8 @@ exports.registration = (req, res) => {
     if (error != null)
         res.json({ error: error })
     else {
+        // ha létezik ezen a néven felhasználó, de még nem azonosította magát
+        // el kell végezni hozzá a törlést
         const db = new Database()
         const bcrypt = new Bcrypt()
         bcrypt.encrypt(req.body.password, (password) => {
