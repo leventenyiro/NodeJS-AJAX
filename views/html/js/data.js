@@ -107,22 +107,20 @@ function response(response) {
         message = response.error
     }
     document.getElementById("response").innerHTML = `
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content ${css}">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">${header}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title" id="responseModalLabel">${header}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </div>
                 <div class="modal-body">${message}</div>
             </div>
         </div>
     </div>`
-    $('#successModal').modal("show")
+    //$('#successModal').modal("show")
+    new bootstrap.Modal(document.getElementById("responseModal")).show()
 }
-
 
 async function getUser(url) {
     var res = await fetch(`${this.url}login`, {
