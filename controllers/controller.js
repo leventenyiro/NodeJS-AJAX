@@ -56,6 +56,17 @@ function checkNewPassword(req) {
         return languages[headerLang(req.headers["accept-language"])].passwordsNotEqual
 }
 
+/* lépések
+db -
+    getUser
+    deleteUser (??)
+    deleteEmailVerification
+    bcrypt.encrypt
+    checkUsername
+    checkEmail
+    registration
+    sendEmailVerification
+*/
 exports.registration = (req, res) => {
     const error = checkRegistration(req)
     if (error != null)
@@ -64,35 +75,41 @@ exports.registration = (req, res) => {
         // ha létezik ezen a néven felhasználó, de még nem azonosította magát
         // el kell végezni hozzá a törlést
         const db = new Database()
-        const bcrypt = new Bcrypt()
-        bcrypt.encrypt(req.body.password, (password) => {
-            // hibakezelés??
-            db.checkUsername(req, (err, result) => {
-                if (err) serverErr(req, res)
-                else if (result.length > 0)
-                    res.json({ error: languages[headerLang(req.headers["accept-language"])].usernameExists })
-                else {
-                    db.checkEmail(req, (err, result) => {
-                        if (err) serverErr(req, res)
-                        else if (result.length > 0)
-                            res.json({ error: languages[headerLang(req.headers["accept-language"])].emailExists })
-                        else {
-                            db.registration(req, password, (err, result) => {
-                                if (err) serverErr(req, res)
-                                else {
-                                    db.sendEmailVerification(result.id, (err, result) => {
-                                        if (err) serverErr(req, res)
-                                        else {
-                                            new Mailsend().verification(req, result.id)
-                                            // hibakezelés?? HA VALAMI NEM SIKERÜL VONJA VISSZA - delete
-                                            res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulRegistration })
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
-                }
+        db.getUser(req, (err, result) => {
+            // err...
+            req.body.userId = result.id
+            db.deleteUser(req) // kell-e error kezelés?
+            db.deleteEmailVerification(req.body.userId)
+            const bcrypt = new Bcrypt()
+            bcrypt.encrypt(req.body.password, (password) => {
+                // hibakezelés??
+                db.checkUsername(req, (err, result) => {
+                    if (err) serverErr(req, res)
+                    else if (result.length > 0)
+                        res.json({ error: languages[headerLang(req.headers["accept-language"])].usernameExists })
+                    else {
+                        db.checkEmail(req, (err, result) => {
+                            if (err) serverErr(req, res)
+                            else if (result.length > 0)
+                                res.json({ error: languages[headerLang(req.headers["accept-language"])].emailExists })
+                            else {
+                                db.registration(req, password, (err, result) => {
+                                    if (err) serverErr(req, res)
+                                    else {
+                                        db.sendEmailVerification(result.id, (err, result) => {
+                                            if (err) serverErr(req, res)
+                                            else {
+                                                new Mailsend().verification(req, result.id)
+                                                // hibakezelés?? HA VALAMI NEM SIKERÜL VONJA VISSZA - delete
+                                                res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulRegistration })
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
             })
         })
     }
