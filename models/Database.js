@@ -36,6 +36,14 @@ class Database {
             return callback(null, result)
         })
     }
+
+    getUnverifiedUser(req, callback) { // tömböt ad vissza
+        const sql = `SELECT id, username, email FROM user WHERE email_verified = "0" AND (username = "${req.body.username}" OR email = "${req.body.email}")`
+        this.conn.query(sql, (err, result) => {
+            if (err) return callback(err, null)
+            return callback(null, result)
+        })
+    }
     
     registration(req, password, callback) {
         this.generateNewHashedId(`user`)
@@ -82,10 +90,10 @@ class Database {
     }
 
     deleteEmailVerification(userId, callback) {
-        const sql = `DELETE FROM email_verification WHERE id = "${userId}"`
+        const sql = `DELETE FROM email_verification WHERE user_id = "${userId}"`
         this.conn.query(sql, (err) => {
             if (err) return callback(err)
-            return callback(null)
+            return null
         })
     }
 
@@ -132,18 +140,19 @@ class Database {
     }
 
     getUser(req, callback) {
-        var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}" OR username = "${req.body.name}" OR email = "${req.body.email}"`
+        var sql = `SELECT id, username, email FROM user WHERE id = "${req.session.userId}"`
         this.conn.query(sql, (err, result) => {
             if (err) return callback(err, null)
             return callback(null, result[0])
         })
     }
 
-    deleteUser(req, callback) {
-        const sql = `DELETE FROM user WHERE id = "${req.body.userId}"`
+    deleteUser(userId) {
+        const sql = `DELETE FROM user WHERE id = "${userId}"`
+        this.conn.query(sql)
         this.conn.query(sql, (err) => {
             if (err) return callback(err)
-            return callback(null)
+            return null
         })
     }
 

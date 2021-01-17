@@ -19,7 +19,8 @@ class Mailsend {
             to: email,
             subject: "Email verification",
             html: `
-                <h1>Verificate your E-mail address</h1>
+                <h1>Hey ${req.body.username}!</h1>
+                <h2>Verificate your E-mail address</h2>
                 <a href="${parameter.mailsend.url}email.html?id=${emailVerificationId}">Verification</a>
                 `
         }

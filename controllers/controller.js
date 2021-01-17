@@ -2,6 +2,7 @@ const Database = require("../models/Database")
 const Bcrypt = require("../models/Bcrypt")
 const Mailsend = require("../models/Mailsend")
 const languages = require("../languages.json")
+const e = require("cors")
 
 function serverErr(req, res) {
     res.json({ error: languages[headerLang(req.headers["accept-language"])].errServer })
@@ -67,44 +68,36 @@ db -
     registration
     sendEmailVerification
 */
+
 exports.registration = (req, res) => {
     const error = checkRegistration(req)
     if (error != null)
         res.json({ error: error })
     else {
-        // ha létezik ezen a néven felhasználó, de még nem azonosította magát
-        // el kell végezni hozzá a törlést
         const db = new Database()
-        db.getUser(req, (err, result) => {
+        db.getUnverifiedUser(req, (err, result) => {
             // err...
-            req.body.userId = result.id
-            db.deleteUser(req) // kell-e error kezelés?
-            db.deleteEmailVerification(req.body.userId)
+            if (result.length > 0) {
+                result.forEach(e => {
+                    db.deleteUser(e.id)
+                    db.deleteEmailVerification(e.id)
+                })
+            }
             const bcrypt = new Bcrypt()
             bcrypt.encrypt(req.body.password, (password) => {
-                // hibakezelés??
                 db.checkUsername(req, (err, result) => {
-                    if (err) serverErr(req, res)
-                    else if (result.length > 0)
+                    if (result.length > 0)
                         res.json({ error: languages[headerLang(req.headers["accept-language"])].usernameExists })
                     else {
                         db.checkEmail(req, (err, result) => {
-                            if (err) serverErr(req, res)
-                            else if (result.length > 0)
+                            if (result.length > 0)
                                 res.json({ error: languages[headerLang(req.headers["accept-language"])].emailExists })
                             else {
                                 db.registration(req, password, (err, result) => {
-                                    if (err) serverErr(req, res)
-                                    else {
-                                        db.sendEmailVerification(result.id, (err, result) => {
-                                            if (err) serverErr(req, res)
-                                            else {
-                                                new Mailsend().verification(req, result.id)
-                                                // hibakezelés?? HA VALAMI NEM SIKERÜL VONJA VISSZA - delete
-                                                res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulRegistration })
-                                            }
-                                        })
-                                    }
+                                    db.sendEmailVerification(result.id, (err, result) => {
+                                        new Mailsend().verification(req, result.id)
+                                        res.json({ success: languages[headerLang(req.headers["accept-language"])].successfulRegistration })
+                                    })
                                 })
                             }
                         })
