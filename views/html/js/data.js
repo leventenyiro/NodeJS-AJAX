@@ -53,9 +53,15 @@ async function emailVerification() {
         },
         body: JSON.stringify({ id: id })
     }).then(res => res.json())
-    //setTimeout(() => { response(res) }, 1000)
-    //setTimeout(() => { window.location = "index.html" }, 3000)
-    window.location = "index.html"
+    if ("success" in res) {
+        var header = "Success"
+        var message = res.success
+    } else {
+        var header = "Error"
+        var message = res.error
+    }
+    setTimeout(() => { document.getElementById("response").innerHTML = `<h2>${header}</h2><h4>${message}</h4>` }, 200)
+    setTimeout(() => { window.location = "index.html" }, 3000)
 }
 
 async function sendForgotPassword() {
@@ -118,7 +124,6 @@ function response(response) {
             </div>
         </div>
     </div>`
-    //$('#successModal').modal("show")
     new bootstrap.Modal(document.getElementById("responseModal")).show()
 }
 
