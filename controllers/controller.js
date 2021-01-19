@@ -129,6 +129,8 @@ exports.verification = (req, res) => {
     })
 }
 
+// itt tartok
+
 exports.sendForgotPassword = (req, res) => {
     if (req.body.email == undefined || req.body.email == "")
         res.json({ error: languages[headerLang(req.headers["accept-language"])].addEmailAddress })
@@ -191,10 +193,12 @@ exports.login = (req, res) => {
                 res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogin })
             } else {
                 if (result[0].email_verified == "0") {
-                    db.sendEmailVerification(req, (result) => {
+                    // HA VAN MÉG ÉRVÉNYBEN LÉVŐ EMAIL-VER, AKKOR HOSSZABBÍTSA AZT ÉS KÜLDJE KI ÚJRA
+                    
+                    /*db.sendEmailVerification(req, (result) => {
                         new Mailsend().verification(req, result);
                         res.json({ error: languages[headerLang(req.headers["accept-language"])].activateEmail })
-                    })
+                    })*/
                 } else {
                     bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
                         if (hash) {

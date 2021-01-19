@@ -74,7 +74,7 @@ class Database {
     checkEmailVerification(req, callback) {
         const sql = `SELECT u.id, email_verified FROM user u
         LEFT JOIN email_verification e ON u.id = e.user_id
-        WHERE e.id = "${req.body.id}"`
+        WHERE e.id = "${req.query.id}"`
         this.conn.query(sql, (err, result) => {
             if (err) return callback(err, null)
             return callback(null, result)
