@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2020. Sze 07. 19:58
--- Kiszolgáló verziója: 10.4.11-MariaDB
--- PHP verzió: 7.4.5
+-- Létrehozás ideje: 2021. Jan 19. 13:55
+-- Kiszolgáló verziója: 10.4.17-MariaDB
+-- PHP verzió: 8.0.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -100,15 +100,16 @@ CREATE TABLE `user` (
   `username` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
   `email` varchar(200) COLLATE utf8_hungarian_ci NOT NULL,
   `password` varchar(255) COLLATE utf8_hungarian_ci NOT NULL,
-  `email_verified` tinyint(4) NOT NULL
+  `email_verified` tinyint(4) NOT NULL,
+  `image` varchar(255) COLLATE utf8_hungarian_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 --
 -- A tábla adatainak kiíratása `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `email`, `password`, `email_verified`) VALUES
-('9053b0d0e4d990d7eccc', 'leventenyiro', 'nyiro.levente@gmail.com', '$2b$10$HRvnr51EVgNHrgYckFPtGe8Et4mJKFzdOyX9DaTC0afYIRJJa4uSa', 1);
+INSERT INTO `user` (`id`, `username`, `email`, `password`, `email_verified`, `image`) VALUES
+('9053b0d0e4d990d7eccc', 'leventenyiro', 'nyiro.levente@gmail.com', '$2b$10$HRvnr51EVgNHrgYckFPtGe8Et4mJKFzdOyX9DaTC0afYIRJJa4uSa', 1, '');
 
 --
 -- Indexek a kiírt táblákhoz
