@@ -62,9 +62,9 @@ class Database {
         })
     }
 
-    sendEmailVerification(id, callback) {
+    sendEmailVerification(userId, callback) {
         this.generateNewHashedId(`email_verification`)
-        const sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${id}", NOW() + INTERVAL 30 day)`
+        const sql = `INSERT INTO email_verification (id, user_id, expiration) VALUES ("${this.hashedId}", "${userId}", NOW() + INTERVAL 30 day)`
         this.conn.query(sql, (err) => {
             if (err) return callback(err, null)
             return callback(null, { id: this.hashedId })
