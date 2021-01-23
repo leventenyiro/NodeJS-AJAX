@@ -14,17 +14,17 @@ ToDo's:
  - [x] Check e-mail address, when forgot password
 
 2020.12.13
- - [] Delete on registation error
- - [] Favorite
- - [] Error and success language variability
+ - [ ] Delete on registation error
+ - [ ] Favorite
+ - [ ] Error and success language variability
 
 2020.12.23
  - [x] Verify goes to the mainpage
- - [] Add responses to index.html
- - [] You can regist if the same username and email exists, but the email_verify is 0
+ - [ ] Add responses to index.html
+ - [ ] You can regist if the same username and email exists, but the email_verify is 0
 
  2021.01.23
-  - [] Learn SQL triggers and functions
+  - [ ] Learn SQL triggers and functions
 
 ## /registration (POST)
     - input:
