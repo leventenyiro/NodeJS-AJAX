@@ -119,6 +119,7 @@ exports.verification = (req, res) => {
             db.emailVerification(result[0].id, (err) => {
                 if (err) serverErr(req, res)
                 else {
+                    console.log("ok")
                     db.deleteEmailVerification(result[0].id, (err) => {
                         if (err) serverErr(req, res)
                         else
@@ -194,12 +195,13 @@ exports.login = (req, res) => {
                 res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogin })
             } else {
                 if (result[0].email_verified == "0") {
+                    req.body.email = result[0].email
                     // V1: HA VAN MÉG ÉRVÉNYBEN LÉVŐ EMAIL VERIFICATION, AKKOR HOSSZABBÍTSA AZT ÉS KÜLDJE KI ÚJRA
 
                     // V2: UA. MINT A V1, CSAK TÖRÖLJE AZ ELŐZŐ VERIFICATIONT
                     db.deleteEmailVerification(result[0].id)
-                    db.sendEmailVerification(result[0].id, (err, id) => {
-                        new Mailsend().verification(req, id)
+                    db.sendEmailVerification(result[0].id, (err, result) => {
+                        new Mailsend().verification(req, result.id)
                         res.json({ error: languages[headerLang(req.headers["accept-language"])].activateEmail })
                     })
                 } else {

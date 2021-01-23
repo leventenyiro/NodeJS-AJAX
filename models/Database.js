@@ -98,7 +98,7 @@ class Database {
     }
 
     login(req, callback) {
-        const sql = `SELECT id, password, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
+        const sql = `SELECT id, password, email, email_verified FROM user WHERE username = "${req.body.usernameEmail}" OR email = "${req.body.usernameEmail}"`
         this.conn.query(sql, (err, result) => {
             if (err)
                 return callback(err, null)

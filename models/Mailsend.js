@@ -1,7 +1,7 @@
 const parameter = require("../parameter.json")
 class Mailsend {
     constructor() {
-        var nodemailer = require("nodemailer")
+        const nodemailer = require("nodemailer")
         this.transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -12,11 +12,9 @@ class Mailsend {
     }
 
     verification(req, emailVerificationId) {
-        let email = req.body.email
-        if (email == undefined) email = req.body.usernameEmail
         this.mailOptions = {
             from: parameter.mailsend.user,
-            to: email,
+            to: req.body.email,
             subject: "Email verification",
             html: `
                 <h1>Hey ${req.body.username}!</h1>
