@@ -3,6 +3,7 @@ const Bcrypt = require("../models/Bcrypt")
 const Mailsend = require("../models/Mailsend")
 const languages = require("../languages.json")
 const e = require("cors")
+const Mail = require("nodemailer/lib/mailer")
 
 function serverErr(req, res) {
     res.json({ error: languages[headerLang(req.headers["accept-language"])].errServer })
@@ -193,12 +194,14 @@ exports.login = (req, res) => {
                 res.json({ error: languages[headerLang(req.headers["accept-language"])].unsuccessfulLogin })
             } else {
                 if (result[0].email_verified == "0") {
-                    // HA VAN MÉG ÉRVÉNYBEN LÉVŐ EMAIL-VER, AKKOR HOSSZABBÍTSA AZT ÉS KÜLDJE KI ÚJRA
-                    
-                    /*db.sendEmailVerification(req, (result) => {
-                        new Mailsend().verification(req, result);
+                    // V1: HA VAN MÉG ÉRVÉNYBEN LÉVŐ EMAIL VERIFICATION, AKKOR HOSSZABBÍTSA AZT ÉS KÜLDJE KI ÚJRA
+
+                    // V2: UA. MINT A V1, CSAK TÖRÖLJE AZ ELŐZŐ VERIFICATIONT
+                    db.deleteEmailVerification(result[0].id)
+                    db.sendEmailVerification(result[0].id, (err, id) => {
+                        new Mailsend().verification(req, id)
                         res.json({ error: languages[headerLang(req.headers["accept-language"])].activateEmail })
-                    })*/
+                    })
                 } else {
                     bcrypt.decrypt(req.body.password, result[0].password, (hash) => {
                         if (hash) {
