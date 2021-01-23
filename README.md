@@ -23,6 +23,9 @@ ToDo's:
  - [] Add responses to index.html
  - [] You can regist if the same username and email exists, but the email_verify is 0
 
+ 2021.01.23
+  - [] Learn SQL triggers and functions
+
 ## /registration (POST)
     - input:
         - username (string)
