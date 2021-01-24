@@ -1,4 +1,5 @@
 const parameter = require("../parameter.json")
+
 class Mailsend {
     constructor() {
         const nodemailer = require("nodemailer")
