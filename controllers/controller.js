@@ -131,8 +131,6 @@ exports.verification = (req, res) => {
     })
 }
 
-// itt tartok
-
 exports.sendForgotPassword = (req, res) => {
     if (req.body.email == undefined || req.body.email == "")
         res.json({ error: languages[headerLang(req.headers["accept-language"])].addEmailAddress })
@@ -225,7 +223,7 @@ exports.getUser = (req, res) => {
         res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
     else {
         const db = new Database()
-        db.getUser(req, (result) => {
+        db.getUser(req, (err, result) => {
             if (result == undefined)
                 res.json({ error: languages[headerLang(req.headers["accept-language"])].notLoggedIn })
             else
