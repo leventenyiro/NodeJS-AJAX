@@ -2,8 +2,6 @@ const Database = require("../models/Database")
 const Bcrypt = require("../models/Bcrypt")
 const Mailsend = require("../models/Mailsend")
 const languages = require("../languages.json")
-const e = require("cors")
-const Mail = require("nodemailer/lib/mailer")
 
 function serverErr(req, res) {
     res.json({ error: languages[headerLang(req.headers["accept-language"])].errServer })
